@@ -17,6 +17,7 @@ import { MlflowRouter } from './MlflowRouter';
 export function MLFlowRoot() {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const i18n = useI18nInit();
+
   const [isDarkTheme, setIsDarkTheme] = React.useState(
     window.matchMedia('(prefers-color-scheme: dark)').matches || false,
   );
