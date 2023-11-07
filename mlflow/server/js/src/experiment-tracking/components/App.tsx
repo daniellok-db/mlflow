@@ -7,7 +7,6 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Switch } from '@databricks/design-system';
 
 import {
   HashRouterV5,
