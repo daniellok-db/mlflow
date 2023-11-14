@@ -7,10 +7,10 @@
 
 import React, { Component } from 'react';
 
-import { Form } from 'antd';
-import { Input } from '@databricks/design-system';
+import { Input, Form } from '@databricks/design-system';
 import { ModelRegistryDocUrl } from '../../common/constants';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import { Interpolation, Theme } from '@emotion/react';
 
 export const MODEL_NAME_FIELD = 'modelName';
 
@@ -30,6 +30,7 @@ class CreateModelFormImpl extends Component<Props> {
   render() {
     const learnMoreLinkUrl = CreateModelFormImpl.getLearnMoreLinkUrl();
     return (
+      // @ts-expect-error TS(2322)
       <Form ref={this.props.innerRef} layout='vertical' data-testid='create-model-form-modal'>
         <Form.Item
           name={MODEL_NAME_FIELD}
@@ -76,6 +77,12 @@ class CreateModelFormImpl extends Component<Props> {
     );
   }
 }
+
+const styles = {
+  text: (theme: Theme): Interpolation<Theme> => ({
+    color: theme.colors.textPrimary,
+  }),
+};
 
 // @ts-expect-error TS(2769): No overload matches this call.
 export const CreateModelForm = injectIntl(CreateModelFormImpl);
