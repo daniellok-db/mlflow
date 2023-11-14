@@ -97,7 +97,7 @@ const styles = {
   homeContainer: (theme: Theme): Interpolation<Theme> => ({
     backgroundColor: theme.colors.backgroundPrimary,
     display: 'flex',
-	flex: 1,
+    flex: 1,
   }),
   experimentList: {
     paddingTop: 24,
