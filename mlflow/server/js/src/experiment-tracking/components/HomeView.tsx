@@ -54,7 +54,7 @@ class HomeView extends Component<HomeViewProps> {
       return (
         <>
           {hasExperiments ? (
-            <PageWrapper css={{ height: `100%`, paddingTop: 16, width: '100%' }}>
+            <PageWrapper css={{ paddingTop: 16, width: '100%' }}>
               <React.Suspense fallback={<LegacySkeleton />}>
                 <ExperimentPage
                   // @ts-expect-error TS(2322): Type '{ experimentIds: string[] | undefined; compa... Remove this comment to see the full error message
@@ -75,7 +75,7 @@ class HomeView extends Component<HomeViewProps> {
           {/* @ts-expect-error TS(2322): Type '{ activeExperimentIds: string[]; experiments... Remove this comment to see the full error message */}
           <ExperimentListView activeExperimentIds={experimentIds || []} experiments={experiments} />
         </div>
-        <PageWrapper css={{ height: '100%', flex: '1', paddingTop: 24 }}>
+        <PageWrapper css={{ flex: '1', paddingTop: 24 }}>
           {hasExperiments ? (
             <React.Suspense fallback={<LegacySkeleton />}>
               <ExperimentPage
@@ -97,12 +97,10 @@ const styles = {
   homeContainer: (theme: Theme): Interpolation<Theme> => ({
     backgroundColor: theme.colors.backgroundPrimary,
     display: 'flex',
-    height: 'calc(100% - 60px)',
+	flex: 1,
   }),
   experimentList: {
-    height: '100%',
     paddingTop: 24,
-    display: 'flex',
   },
 };
 
