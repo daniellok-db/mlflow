@@ -1,8 +1,10 @@
 import colorsys
 import json
+import pickle
 import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import List
 
 from mlflow.tracing.types.model import Span, Trace
@@ -40,10 +42,15 @@ class DummyTraceClientWithHTMLDisplay(TraceClient):
         children: List = field(default_factory=list)
 
     def log_trace(self, trace: Trace):
-        from IPython.display import display
+        from IPython import display
+
+        from mlflow.utils.file_utils import create_tmp_dir
 
         root_node = self._recover_tree(trace)
-        display(json.dumps(root_node, default=lambda o: str(o), indent=2))
+        tmp = Path(create_tmp_dir()) / "trace.pkl"
+        pickled = pickle.dumps(root_node)
+        tmp.write_bytes(pickled)
+        display(f"Wrote trace to {tmp}")
 
     def _recover_tree(self, trace: Trace):
         # Recover the tree from the trace
