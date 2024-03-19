@@ -40,12 +40,7 @@ class DummyTraceClientWithHTMLDisplay(TraceClient):
         children: List = field(default_factory=list)
 
     def log_trace(self, trace: Trace):
-        from IPython.display import HTML, display
-
-        root_node = self._recover_tree(trace)
-
-        html = self._generate_html_with_interaction_and_style(root_node)
-        display(HTML(html))
+        return self._recover_tree(trace)
 
     def _recover_tree(self, trace: Trace):
         # Recover the tree from the trace
