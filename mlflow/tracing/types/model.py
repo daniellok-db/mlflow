@@ -34,8 +34,14 @@ class Trace:
         """
         return {
             "application/databricks.mlflow.trace": self.to_json(),
-            "text/plain": self.__repr__(),
+            "text/plain": self.to_json(),
         }
+
+    def __repr__(self) -> str:
+        return self.to_json()
+
+    def __str__(self) -> str:
+        return self.to_json()
 
 
 @dataclass
