@@ -33,6 +33,7 @@ class Trace(_MLflowObject):
         which contains a JSON representation of the Trace object. This object is deserialized
         in Databricks notebooks to display the Trace object in a nicer UI.
         """
+        raise Exception("what happens")
         return {
             "application/databricks.mlflow.trace": self.to_json(),
             "text/plain": self.__repr__(),
