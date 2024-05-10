@@ -101,6 +101,7 @@ class _CaptureImportedModules:
         # Revert the patches
         builtins.__import__ = self.original_import
         importlib.import_module = self.original_import_module
+        print("@@@ imports", self.imported_modules)
 
 
 def parse_args():

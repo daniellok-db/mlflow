@@ -276,6 +276,7 @@ def _save_model_with_class_artifacts_params(
             .. Note:: Experimental: This parameter may change or be removed in a future release
                 without warning.
     """
+    _logger.warning("@@@ TEST", mlflow_model, artifacts)
     if mlflow_model is None:
         mlflow_model = Model()
 
@@ -384,9 +385,12 @@ def _save_model_with_class_artifacts_params(
         mlflow_model.model_size_bytes = size
     mlflow_model.save(os.path.join(path, MLMODEL_FILE_NAME))
 
+    _logger.warning("@@@ REQUIREMENTS", conda_env, pip_requirements, extra_pip_requirements)
+
     if conda_env is None:
         if pip_requirements is None:
             default_reqs = get_default_pip_requirements()
+            _logger.warning("@@@ DEFAULTS", default_reqs)
             # To ensure `_load_pyfunc` can successfully load the model during the dependency
             # inference, `mlflow_model.save` must be called beforehand to save an MLmodel file.
             inferred_reqs = mlflow.models.infer_pip_requirements(
@@ -394,6 +398,7 @@ def _save_model_with_class_artifacts_params(
                 mlflow.pyfunc.FLAVOR_NAME,
                 fallback=default_reqs,
             )
+            _logger.warning("@@@ INFERRED", inferred_reqs)
             default_reqs = sorted(set(inferred_reqs).union(default_reqs))
         else:
             default_reqs = None

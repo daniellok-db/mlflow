@@ -446,8 +446,10 @@ def infer_pip_requirements(model_uri, flavor, fallback=None):
 
     """
     try:
+        _logger.warning("@@@ INSIDE INFER", model_uri, flavor)
         return _infer_requirements(model_uri, flavor)
-    except Exception:
+    except Exception as e:
+        _logger.warning("@@@ ERROR INFERRING", e)
         if fallback is not None:
             _logger.warning(
                 msg=_INFER_PIP_REQUIREMENTS_GENERAL_ERROR_MESSAGE.format(

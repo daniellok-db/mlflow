@@ -205,6 +205,7 @@ def _run_command(cmd, timeout_seconds, env=None):
         stdout, stderr = proc.communicate()
         stdout = stdout.decode("utf-8")
         stderr = stderr.decode("utf-8")
+        _logger.warning("@@@@ STDOUT", stdout, stderr)
         if proc.returncode != 0:
             msg = "\n".join(
                 [
@@ -335,7 +336,9 @@ def _capture_imported_modules(model_uri, flavor):
         )
 
         with open(output_file) as f:
-            return f.read().splitlines()
+            contents = f.read().splitlines()
+            _logger.warning("@@@ OUTPUT FILE CONTENTS", contents)
+            return contents
 
 
 DATABRICKS_MODULES_TO_PACKAGES = {
@@ -424,9 +427,13 @@ def _infer_requirements(model_uri, flavor):
         _PYPI_PACKAGE_INDEX = _load_pypi_package_index()
 
     modules = _capture_imported_modules(model_uri, flavor)
+    print("@@@ MODULES", modules)
     packages = _flatten([_MODULES_TO_PACKAGES.get(module, []) for module in modules])
+    print("@@@ PACKAGES 1", list(packages))
     packages = map(_normalize_package_name, packages)
+    print("@@@ PACKAGES 2", packages)
     packages = _prune_packages(packages)
+    print("@@@ PACKAGES 3", packages)
     excluded_packages = [
         # Certain packages (e.g. scikit-learn 0.24.2) imports `setuptools` or `pkg_resources`
         # (a module provided by `setuptools`) to process or interact with package metadata.
@@ -439,9 +446,11 @@ def _infer_requirements(model_uri, flavor):
         *_MODULES_TO_PACKAGES.get("mlflow", []),
     ]
     packages = packages - set(excluded_packages)
+    print("@@@ PACKAGES 4", packages, excluded_packages)
 
     # manually exclude mlflow[gateway] as it isn't listed separately in PYPI_PACKAGE_INDEX
     unrecognized_packages = packages - _PYPI_PACKAGE_INDEX.package_names - {"mlflow[gateway]"}
+    print("@@@ PACKAGES 5", unrecognized_packages)
     if unrecognized_packages:
         _logger.warning(
             "The following packages were not found in the public PyPI package index as of"
