@@ -373,7 +373,10 @@ export const ExperimentViewRunsTable = React.memo(
             css={[styles.agGridOverrides(theme), { display: displayRunsTable ? 'block' : 'hidden', height: '100%' }]}
             aria-hidden={!displayRunsTable}
           >
-            <ExperimentViewRunsTableHeaderContextProvider runsHiddenMode={uiState.runsHiddenMode}>
+            <ExperimentViewRunsTableHeaderContextProvider
+              runsHiddenMode={uiState.runsHiddenMode}
+              useGroupedValuesInCharts={Boolean(uiState.groupBy) && uiState.useGroupedValuesInCharts}
+            >
               <MLFlowAgGridLoader
                 context={tableContext}
                 defaultColDef={EXPERIMENTS_DEFAULT_COLUMN_SETUP}
