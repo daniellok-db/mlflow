@@ -14,7 +14,8 @@
  *   place these generated objects in the correct location shortly.
  */
 import { ModelTraceInfo, ModelTraceData } from '@databricks/web-shared/model-trace-explorer';
-import { deleteJson, getBigIntJson, getJson, patchJson, postJson } from '../../common/utils/FetchUtils';
+import { type ParsedQs, stringify as queryStringStringify } from 'qs';
+import { deleteJson, fetchEndpoint, getBigIntJson, getJson, patchJson, postJson } from '../../common/utils/FetchUtils';
 import { RunInfoEntity } from '../types';
 import {
   transformGetExperimentResponse,
@@ -181,14 +182,18 @@ export class MlflowService {
       prev_page_token?: string;
     };
 
-    return getJson({
-      relativeUrl: `ajax-api/2.0/mlflow/traces`,
-      data: {
-        experiment_ids: experimentIds.join(','),
+    const queryString = queryStringStringify(
+      {
+        experiment_ids: experimentIds,
         order_by: orderBy,
         page_token: pageToken,
         filter: filterString,
       },
+      { arrayFormat: 'repeat' },
+    );
+
+    return fetchEndpoint({
+      relativeUrl: `ajax-api/2.0/mlflow/traces?${queryString}`,
     }) as Promise<GetExperimentTracesResponse>;
   };
 
