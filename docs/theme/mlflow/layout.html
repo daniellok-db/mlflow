@@ -1,6 +1,9 @@
 {# TEMPLATE VAR SETTINGS #}
 {%- set url_root = pathto('', 1) %}
 {%- if url_root == '#' %}{% set url_root = '' %}{% endif %}
+{%- set JUPYTER_WIDGET_PATH = 'https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js' %}
+{%- set jupyter_widget = script_files | select('eq', JUPYTER_WIDGET_PATH) | first %}
+{%- set script_files = script_files | reject('eq', JUPYTER_WIDGET_PATH) %}
 
 <!DOCTYPE html>
 <!-- source: docs/source/{{ pagename }}{{ page_source_suffix }} -->
@@ -97,6 +100,9 @@
 {%- for scriptfile in script_files %}
 <script type="text/javascript" src="{{ pathto(scriptfile, 1) }}"></script>
 {%- endfor %}
+{%- if page_source_suffix == '.ipynb' %}
+<script type="text/javascript" src="{{ pathto(jupyter_widget, 1) }}"></script>
+{%- endif %}
 
 <body class="wy-body-for-nav" role="document">
   {% if gtm_id %}
