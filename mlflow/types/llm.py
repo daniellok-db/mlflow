@@ -22,6 +22,14 @@ class _BaseDataclass:
             raise ValueError(
                 f"`{key}` must be of type {val_type.__name__}, got {type(value).__name__}"
             )
+        
+    def _validate_literal(self, key, literal_values, required):
+        value = getattr(self, key, None)
+        if required and value is None:
+            raise ValueError(f"`{key}` is required")
+
+        if value is not None and value not in literal_values:
+            raise ValueError(f"`{key}` must be one of {literal_values}, got {value}")
 
     def _validate_list(self, key, val_type, required):
         values = getattr(self, key, None)
@@ -60,6 +68,34 @@ class _BaseDataclass:
 
 
 @dataclass
+class ChatContentImageURL:
+    url: str
+    detail: Optional[Literal['high', 'low', 'auto']]
+
+    def __post_init__(self):
+        self._validate_field("url", str, True)
+        self._validate_literal("detail", ['high', 'low', 'auto'], False)
+
+
+@dataclass
+class ChatContentPart(_BaseDataclass):
+    type: Literal["text", "image_url"]
+    text: Optional[str]
+    image_url: Optional[ChatContentImageURL]
+
+    def __post_init__(self):
+        self._validate_literal("type", ["text", "image_url"], True)
+
+        if self.type == "text":
+            self._validate_field("text", str, True)
+            if self.image_url:
+                raise ValueError("Image URL is not allowed for text content parts")
+        elif self.type == "image_url":
+            self._validate_field("image_url", ChatContentImageURL, True)
+            if self.text:
+                raise ValueError("Text is not allowed for image content parts")
+
+@dataclass
 class ChatMessage(_BaseDataclass):
     """
     A message in a chat request or response.
@@ -68,6 +104,8 @@ class ChatMessage(_BaseDataclass):
         role (str): The role of the entity that sent the message (e.g. ``"user"``, ``"system"``).
         content (str): The content of the message.
             **Optional** Supplied if a non-refusal response is provided.
+        content_parts (array): Array of content parts.
+            **Optional** Can be used instead of the `content` field for image API requests
         refusal (str): The refusal message content.
             **Optional** Supplied if a refusal response is provided.
         name (str): The name of the entity that sent the message. **Optional**.
@@ -75,6 +113,7 @@ class ChatMessage(_BaseDataclass):
 
     role: str
     content: Optional[str] = None
+    content_parts: Optional[List[ChatContentPart]] = None
     refusal: Optional[str] = None
     name: Optional[str] = None
 
@@ -89,6 +128,7 @@ class ChatMessage(_BaseDataclass):
             self._validate_field("content", str, True)
 
         self._validate_field("name", str, False)
+        self._validate_list("content_parts", ChatContentPart, False)
 
 
 @dataclass
