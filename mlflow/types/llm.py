@@ -68,9 +68,9 @@ class _BaseDataclass:
 
 
 @dataclass
-class ChatContentImageURL:
+class ChatContentImageURL(_BaseDataclass):
     url: str
-    detail: Optional[Literal['high', 'low', 'auto']]
+    detail: Optional[Literal['high', 'low', 'auto']] = None
 
     def __post_init__(self):
         self._validate_field("url", str, True)
@@ -80,8 +80,8 @@ class ChatContentImageURL:
 @dataclass
 class ChatContentPart(_BaseDataclass):
     type: Literal["text", "image_url"]
-    text: Optional[str]
-    image_url: Optional[ChatContentImageURL]
+    text: Optional[str] = None
+    image_url: Optional[ChatContentImageURL] = None
 
     def __post_init__(self):
         self._validate_literal("type", ["text", "image_url"], True)
@@ -91,6 +91,8 @@ class ChatContentPart(_BaseDataclass):
             if self.image_url:
                 raise ValueError("Image URL is not allowed for text content parts")
         elif self.type == "image_url":
+            if isinstance(self.image_url, dict):
+                self.image_url = ChatContentImageURL(**self.image_url)
             self._validate_field("image_url", ChatContentImageURL, True)
             if self.text:
                 raise ValueError("Text is not allowed for image content parts")
@@ -124,11 +126,13 @@ class ChatMessage(_BaseDataclass):
             self._validate_field("refusal", str, True)
             if self.content:
                 raise ValueError("Both `content` and `refusal` cannot be set")
-        else:
-            self._validate_field("content", str, True)
 
+        self._validate_field("content", str, False)
         self._validate_field("name", str, False)
-        self._validate_list("content_parts", ChatContentPart, False)
+
+        if self.content_parts:
+            self._convert_dataclass_list("content_parts", ChatContentPart, True)
+            self._validate_list("content_parts", ChatContentPart, False)
 
 
 @dataclass
@@ -160,7 +164,6 @@ class ChatParams(_BaseDataclass):
             positive values penalize new tokens based on whether they appear in the text so far,
             increasing the model's likelihood to talk about new topics.
     """
-
     temperature: float = 1.0
     max_tokens: Optional[int] = None
     stop: Optional[List[str]] = None
@@ -171,6 +174,7 @@ class ChatParams(_BaseDataclass):
     top_k: Optional[int] = None
     frequency_penalty: Optional[float] = None
     presence_penalty: Optional[float] = None
+    model: Optional[str] = None
 
     def __post_init__(self):
         self._validate_field("temperature", float, True)
@@ -183,6 +187,7 @@ class ChatParams(_BaseDataclass):
         self._validate_field("top_k", int, False)
         self._validate_field("frequency_penalty", float, False)
         self._validate_field("presence_penalty", float, False)
+        self._validate_field("model", str, False)
 
 
 @dataclass()
@@ -204,7 +209,6 @@ class ChatRequest(ChatParams):
         stream (bool): Whether to stream back responses as they are generated. **Optional**,
             defaults to ``False``
     """
-
     messages: List[ChatMessage] = field(default_factory=list)
 
     def __post_init__(self):
