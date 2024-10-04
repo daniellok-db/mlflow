@@ -103,8 +103,23 @@ def _score_model_on_one_payload(
     eval_model,
     parameters,
 ):
-    raw_result = model_utils.score_model_on_payload(eval_model, payload, parameters)
-    return _extract_score_and_justification(raw_result)
+    print("@@@ payload", payload)
+    try:
+        raw_result = model_utils.score_model_on_payload(eval_model, payload, parameters)
+        return _extract_score_and_justification(raw_result)
+    except ImportError:
+        raise
+    except MlflowException as e:
+        if e.error_code in [
+            ErrorCode.Name(BAD_REQUEST),
+            ErrorCode.Name(UNAUTHENTICATED),
+            ErrorCode.Name(INVALID_PARAMETER_VALUE),
+        ]:
+            raise
+        else:
+            return None, f"Failed to score model on payload. Error: {e!s}"
+    except Exception as e:
+        return None, f"Failed to score model on payload. Error: {e!s}"
 
 
 def _score_model_on_payloads(
