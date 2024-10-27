@@ -8,6 +8,7 @@ from mlflow.utils.databricks_utils import is_in_databricks_runtime
 from mlflow.tracing.display.sketch import sketch
 
 _logger = logging.getLogger(__name__)
+_logger.setLevel(logging.DEBUG)
 
 
 def _serialize_trace_list(traces: List[Trace]):
@@ -69,6 +70,7 @@ class IPythonTraceDisplayHandler:
                 self.traces_to_display = {}
                 return
 
+            print("checking if in dbr", is_in_databricks_runtime())
             if is_in_databricks_runtime():
                 display(
                     self.get_mimebundle(traces_to_display),
@@ -92,9 +94,12 @@ class IPythonTraceDisplayHandler:
             _logger.debug("Failed to display traces", exc_info=True)
 
     def get_mimebundle(self, traces: List[Trace]):
+        print("getting mimebundle")
         if len(traces) == 1:
+            print("one trace")
             if is_in_databricks_runtime:
                 return traces[0]._repr_mimebundle_()
+            print('to json', json.dumps(traces[0].to_json()))
             return json.dumps(traces[0].to_json())
         else:
             if is_in_databricks_runtime:
@@ -102,7 +107,10 @@ class IPythonTraceDisplayHandler:
                     "application/databricks.mlflow.trace": _serialize_trace_list(traces),
                     "text/plain": repr(traces),
                 }
-            return json.dumps([json.loads(trace.to_json()) for trace in traces])
+            thing = json.dumps([json.loads(trace.to_json()) for trace in traces])
+            print("many traces", thing)
+            
+            return thing
 
     def display_traces(self, traces: List[Trace]):
         # this should do nothing if not in an IPython environment
