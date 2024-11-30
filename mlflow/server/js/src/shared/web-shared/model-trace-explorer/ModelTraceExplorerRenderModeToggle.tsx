@@ -6,7 +6,7 @@ import {
   Tooltip,
   useDesignSystemTheme,
 } from '@databricks/design-system';
-import { FormattedMessage } from '@databricks/i18n';
+import { FormattedMessage } from 'react-intl';
 
 export function ModelTraceExplorerRenderModeToggle({
   shouldRenderMarkdown,

@@ -1,19 +1,16 @@
 import { Button, ChevronUpIcon, FileDocumentIcon, useDesignSystemTheme } from '@databricks/design-system';
-import { FormattedMessage } from '@databricks/i18n';
+import { FormattedMessage } from 'react-intl';
 
-import { GenAIMarkdownRenderer } from '../../genai-markdown-renderer';
 import { KeyValueTag } from '../key-value-tag/KeyValueTag';
 
 export function ModelTraceExplorerRetrieverDocumentFull({
   text,
   metadataTags,
   setExpanded,
-  logDocumentClick,
 }: {
   text: string;
   metadataTags: { key: string; value: string }[];
   setExpanded: (expanded: boolean) => void;
-  logDocumentClick: (action: string) => void;
 }) {
   const { theme } = useDesignSystemTheme();
 
@@ -23,7 +20,6 @@ export function ModelTraceExplorerRetrieverDocumentFull({
         role="button"
         onClick={() => {
           setExpanded(false);
-          logDocumentClick('collapse');
         }}
         css={{
           display: 'flex',
@@ -40,9 +36,7 @@ export function ModelTraceExplorerRetrieverDocumentFull({
       >
         <FileDocumentIcon />
       </div>
-      <div css={{ padding: theme.spacing.md, paddingBottom: 0 }}>
-        <GenAIMarkdownRenderer>{text}</GenAIMarkdownRenderer>
-      </div>
+      <div css={{ padding: theme.spacing.md, paddingBottom: 0 }}>{text}</div>
       <div css={{ padding: theme.spacing.md, paddingTop: 0 }}>
         {metadataTags.map(({ key, value }) => (
           <KeyValueTag key={key} itemKey={key} itemValue={value} />

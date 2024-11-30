@@ -1,17 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 
 import { useDesignSystemTheme, Typography, ChevronDownIcon, ChevronRightIcon, Button } from '@databricks/design-system';
-import { FeedbackLink } from '@databricks/web-shared/fastfeedback';
-import { Es, useReactInteractionTracing, AlertUtils } from '@databricks/web-shared/metrics';
-import { useRecordEvent } from '@databricks/web-shared/metrics/useRecordEvent';
-import { useRecordProto } from '@databricks/web-shared/metrics/useRecordProto';
+
 import {
   ModelTraceExplorer,
   ModelTraceChildToParentFrameMessage,
   ModelTraceParentToChildFrameMessage,
 } from '@databricks/web-shared/model-trace-explorer';
 import type { ModelTrace, ModelTraceChildToParentFrameMessageType } from '@databricks/web-shared/model-trace-explorer';
-import { useDesignSystemEventCallback } from '@databricks/web-shared/observability/analytics/useDesignSystemEventCallback';
 
 import { findTraceVersionByKey } from '../ModelTraceExplorer.utils';
 import rendererVersions from '../ml-model-trace-renderer/library-versions.json';
@@ -49,16 +45,7 @@ export const ModelTraceExplorerFrameRenderer = ({
   const version = useLatestVersion ? 'current' : getTraceVersion(modelTrace);
   const rendererVersionSrc = (rendererVersions as any)[version]?.path ?? rendererVersions[FALLBACK_VERSION].path;
 
-  const recordEvent = useRecordEvent();
-  const recordProto = useRecordProto();
-  const { startInteraction } = useReactInteractionTracing();
   const { theme } = useDesignSystemTheme();
-
-  const eventServiceCallback = useDesignSystemEventCallback({
-    recordEvent,
-    recordProto,
-    startInteraction,
-  });
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent<ModelTraceChildToParentFrameMessageType>) => {
@@ -76,18 +63,10 @@ export const ModelTraceExplorerFrameRenderer = ({
         case ModelTraceChildToParentFrameMessage.LogError: {
           // Intercept errors from the iFrame and send them to regular error logging logic.
           // If it's a promise, add relevant metric flag.
-          const { error } = event.data || {};
-          AlertUtils.sev2(Es.MlExperiments, 'ModelTraceExplorerFrameRenderer/Error', error);
-
           break;
         }
         case ModelTraceChildToParentFrameMessage.LogEvent: {
           // Intercept UI usage events from the iFrame
-          const eventDefaultPrevented = event.data.payload.eventDefaultPrevented;
-          eventServiceCallback({
-            ...event.data.payload,
-            skip: eventDefaultPrevented,
-          });
           break;
         }
         default:
@@ -99,7 +78,7 @@ export const ModelTraceExplorerFrameRenderer = ({
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [eventServiceCallback]);
+  }, []);
 
   useEffect(() => {
     const iframeWindow = iframeRef.current?.contentWindow;
@@ -147,7 +126,6 @@ export const ModelTraceExplorerFrameRenderer = ({
             Learn More
           </Typography.Link>
         </div>
-        <FeedbackLink parentUi={Es.MlFlowOSS} origin="mlflow-notebook-trace-ui" />
       </div>
       {isLoading && (
         <div

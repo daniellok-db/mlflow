@@ -29,7 +29,6 @@ import type {
   ModelTraceToolCall,
 } from './ModelTrace.types';
 import { ModelTraceExplorerIcon } from './ModelTraceExplorerIcon';
-import { safex } from '../flags';
 
 function getIconTypeForSpan(spanType: ModelSpanType | string): ModelIconType {
   switch (spanType) {
@@ -306,10 +305,6 @@ export function parseModelTraceToTree(trace: ModelTrace): ModelTraceSpanNode | n
   }
 
   return getSpanNodeFromData(rootSpan.context.span_id);
-}
-
-export function getIsMlflowTraceUIEnabled(): boolean {
-  return (safex('mlflow_tracing', null) as boolean) ?? safex('databricks.fe.mlflow.enableTracingUI', false);
 }
 
 // this function attempts to extract the trace version from

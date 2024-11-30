@@ -14,8 +14,7 @@ import {
   UserIcon,
   WrenchIcon,
 } from '@databricks/design-system';
-import { FormattedMessage } from '@databricks/i18n';
-import { GenAIMarkdownRenderer } from '@databricks/web-shared/genai-markdown-renderer';
+import { FormattedMessage } from 'react-intl';
 
 import { ModelTraceExplorerToolCallMessage } from './ModelTraceExplorerToolCallMessage';
 import type { ModelTraceChatMessage } from '../ModelTrace.types';
@@ -155,7 +154,7 @@ export function ModelTraceExplorerChatMessage({
           message.tool_calls.map((toolCall) => (
             <ModelTraceExplorerToolCallMessage key={toolCall.id} toolCall={toolCall} />
           ))}
-        {message.content && <GenAIMarkdownRenderer>{displayedContent ?? ''}</GenAIMarkdownRenderer>}
+        {message.content && (displayedContent ?? '')}
       </div>
       {shouldTruncate && (
         <Button

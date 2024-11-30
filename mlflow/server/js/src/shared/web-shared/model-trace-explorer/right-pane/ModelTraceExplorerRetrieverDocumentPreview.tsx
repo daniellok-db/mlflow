@@ -6,12 +6,10 @@ export function ModelTraceExplorerRetrieverDocumentPreview({
   text,
   metadataTags,
   setExpanded,
-  logDocumentClick,
 }: {
   text: string;
   metadataTags: { key: string; value: string }[];
   setExpanded: (expanded: boolean) => void;
-  logDocumentClick: (action: string) => void;
 }) {
   const { theme } = useDesignSystemTheme();
 
@@ -20,7 +18,6 @@ export function ModelTraceExplorerRetrieverDocumentPreview({
       role="button"
       onClick={() => {
         setExpanded(true);
-        logDocumentClick('expand');
       }}
       css={{
         display: 'flex',

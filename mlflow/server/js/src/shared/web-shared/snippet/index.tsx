@@ -24,7 +24,7 @@ const themesStyles: Record<CodeSnippetTheme, any> = {
   duotoneDark: duotoneDarkStyle,
 };
 
-export type CodeSnippetLanguage = 'python' | 'json';
+export type CodeSnippetLanguage = 'python' | 'json' | 'text';
 
 export interface CodeSnippetProps {
   /**
@@ -60,6 +60,9 @@ export interface CodeSnippetProps {
    * Whether or not to wrap long lines
    */
   wrapLongLines?: boolean;
+  PreTag?: any;
+  lineProps?: any;
+  wrapLines?: boolean;
 }
 
 /**
@@ -74,6 +77,9 @@ export function CodeSnippet({
   showLineNumbers,
   lineNumberStyle,
   wrapLongLines,
+  PreTag,
+  lineProps,
+  wrapLines,
 }: CodeSnippetProps) {
   const customStyle = {
     border: 'none',
@@ -94,6 +100,9 @@ export function CodeSnippet({
         style: pick(style, 'backgroundColor'),
       }}
       wrapLongLines={wrapLongLines}
+      PreTag={PreTag}
+      lineProps={lineProps}
+      wrapLines={wrapLines}
     >
       {children}
     </SyntaxHighlighter>

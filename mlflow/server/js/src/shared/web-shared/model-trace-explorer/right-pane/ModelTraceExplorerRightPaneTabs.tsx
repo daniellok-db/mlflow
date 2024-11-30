@@ -3,7 +3,7 @@ import { isNil } from 'lodash';
 import React from 'react';
 
 import { Empty, Tabs, useDesignSystemTheme } from '@databricks/design-system';
-import { FormattedMessage } from '@databricks/i18n';
+import { FormattedMessage } from 'react-intl';
 
 import { ModelTraceExplorerAttributesTab } from './ModelTraceExplorerAttributesTab';
 import { ModelTraceExplorerContentTab } from './ModelTraceExplorerContentTab';

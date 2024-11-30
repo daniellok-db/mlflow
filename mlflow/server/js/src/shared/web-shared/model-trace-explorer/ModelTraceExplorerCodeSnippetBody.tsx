@@ -2,11 +2,10 @@ import { isNil, isString } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, ChevronDownIcon, ChevronUpIcon, useDesignSystemTheme } from '@databricks/design-system';
-import { FormattedMessage } from '@databricks/i18n';
+import { FormattedMessage } from 'react-intl';
 
 import type { CodeSnippetRenderMode, SearchMatch } from './ModelTrace.types';
 import { ModelTraceExplorerHighlightedCodeSnippet } from './ModelTraceExplorerHighlightedCodeSnippet';
-import { GenAIMarkdownRenderer } from '../genai-markdown-renderer';
 import { CodeSnippet } from '../snippet';
 
 const MAX_LINES_FOR_PREVIEW = 4;
@@ -94,7 +93,7 @@ export function ModelTraceExplorerCodeSnippetBody({
             marginBottom: -theme.spacing.md,
           }}
         >
-          <GenAIMarkdownRenderer>{displayedData}</GenAIMarkdownRenderer>
+          {displayedData}
         </div>
       ) : (
         <CodeSnippet

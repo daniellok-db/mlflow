@@ -10,11 +10,7 @@ import {
 } from '@databricks/design-system';
 import { getTraceDisplayName } from './TracesView.utils';
 import { useExperimentTraceData } from './hooks/useExperimentTraceData';
-import {
-  type ModelTrace,
-  ModelTraceInfo,
-  ModelTraceExplorerFrameRenderer,
-} from '@databricks/web-shared/model-trace-explorer';
+import { type ModelTrace, ModelTraceInfo, ModelTraceExplorer } from '@databricks/web-shared/model-trace-explorer';
 import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useExperimentTraceInfo } from './hooks/useExperimentTraceInfo';
@@ -167,7 +163,7 @@ export const TraceDataDrawer = ({
           }}
           onWheel={(e) => e.stopPropagation()}
         >
-          <ModelTraceExplorerFrameRenderer modelTrace={combinedModelTrace as ModelTrace} height="100%" />
+          <ModelTraceExplorer modelTrace={combinedModelTrace as ModelTrace} />
         </div>
       );
     }

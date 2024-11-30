@@ -2,7 +2,7 @@ import { isNil } from 'lodash';
 import { useMemo, useState } from 'react';
 
 import { Tag, useDesignSystemTheme } from '@databricks/design-system';
-import { FormattedMessage } from '@databricks/i18n';
+import { FormattedMessage } from 'react-intl';
 
 import { ModelTraceExplorerRetrieverDocument } from './ModelTraceExplorerRetrieverDocument';
 import type { ModelTraceSpanNode, RetrieverDocument, SearchMatch } from '../ModelTrace.types';

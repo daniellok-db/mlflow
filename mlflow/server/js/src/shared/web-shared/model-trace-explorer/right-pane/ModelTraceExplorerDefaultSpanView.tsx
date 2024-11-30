@@ -1,7 +1,7 @@
 import { isNil } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 
-import { FormattedMessage } from '@databricks/i18n';
+import { FormattedMessage } from 'react-intl';
 
 import { ModelTraceExplorerConversation } from './ModelTraceExplorerConversation';
 import type { ModelTraceSpanNode, SearchMatch } from '../ModelTrace.types';

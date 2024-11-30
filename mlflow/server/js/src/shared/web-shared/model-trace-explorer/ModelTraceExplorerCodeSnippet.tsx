@@ -7,7 +7,6 @@ import type { SearchMatch } from './ModelTrace.types';
 import { CodeSnippetRenderMode } from './ModelTrace.types';
 import { ModelTraceExplorerCodeSnippetBody } from './ModelTraceExplorerCodeSnippetBody';
 import { ModelTraceExplorerHighlightedSnippetTitle } from './ModelTraceExplorerHighlightedSnippetTitle';
-import { SnippetCopyAction } from '../snippet';
 
 // return the initial render mode if specified, otherwise
 // default to markdown for string data and json for non-string data
@@ -142,11 +141,6 @@ export function ModelTraceExplorerCodeSnippet({
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
             )}
-            <SnippetCopyAction
-              key="copy-snippet"
-              componentId="shared.model-trace-explorer.copy-snippet"
-              copyText={data}
-            />
           </div>
         </div>
         <ModelTraceExplorerCodeSnippetBody

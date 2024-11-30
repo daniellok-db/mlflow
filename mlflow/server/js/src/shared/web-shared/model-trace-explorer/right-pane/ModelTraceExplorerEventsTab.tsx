@@ -1,7 +1,7 @@
 import { isNil } from 'lodash';
 
 import { Empty, Typography, useDesignSystemTheme, XCircleIcon } from '@databricks/design-system';
-import { FormattedMessage } from '@databricks/i18n';
+import { FormattedMessage } from 'react-intl';
 
 import { CodeSnippetRenderMode, type ModelTraceSpanNode, type SearchMatch } from '../ModelTrace.types';
 import { getEventAttributeKey } from '../ModelTraceExplorer.utils';

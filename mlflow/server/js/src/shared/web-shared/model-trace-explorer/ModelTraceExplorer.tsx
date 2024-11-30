@@ -2,9 +2,7 @@ import { values } from 'lodash';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, useDesignSystemTheme, VisibleIcon, VisibleOffIcon } from '@databricks/design-system';
-import { FormattedMessage } from '@databricks/i18n';
-import { useRecordEvent, useRecordProto } from '@databricks/web-shared/metrics';
-import { recordObservabilityEvent } from '@databricks/web-shared/observability';
+import { FormattedMessage } from 'react-intl';
 
 import type { ModelTrace, ModelTraceExplorerTab, ModelTraceSpanNode } from './ModelTrace.types';
 import { parseModelTraceToTree } from './ModelTraceExplorer.utils';
@@ -64,26 +62,6 @@ export const ModelTraceExplorer = ({ modelTrace, className }: { modelTrace: Mode
   const [paneWidth, setPaneWidth] = useState(500);
   const [showGantt, setShowGantt] = useState(defaultShowGantt);
   const [activeTab, setActiveTab] = useState<ModelTraceExplorerTab>('content');
-
-  const recordEvent = useRecordEvent();
-  const recordProto = useRecordProto();
-  const logSpanClick = useCallback(
-    (
-      span: ModelTraceSpanNode, // log the click with some span metadata
-    ) =>
-      recordObservabilityEvent(recordEvent, recordProto, {
-        eventType: 'component_click',
-        eventEntity: {
-          entityType: 'component',
-          entitySubType: 'div',
-          entityId: `shared.model-trace-explorer.${span.type}-span-click`,
-        },
-        eventPayload: {
-          interactionSubject: true,
-        },
-      }),
-    [recordEvent, recordProto],
-  );
 
   const [selectedNode, setSelectedNode] = useState<ModelTraceSpanNode | undefined>(treeNode ?? undefined);
   const {
@@ -156,7 +134,6 @@ export const ModelTraceExplorer = ({ modelTrace, className }: { modelTrace: Mode
                 expandedKeys={expandedKeys}
                 setExpandedKeys={setExpandedKeys}
                 showGantt={showGantt}
-                onNodeClick={logSpanClick}
               />
             ) : (
               <div

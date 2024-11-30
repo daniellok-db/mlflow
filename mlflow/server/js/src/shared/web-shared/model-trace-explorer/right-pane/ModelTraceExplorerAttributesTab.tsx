@@ -1,7 +1,7 @@
 import { isNil, keys } from 'lodash';
 
 import { Empty, useDesignSystemTheme } from '@databricks/design-system';
-import { FormattedMessage } from '@databricks/i18n';
+import { FormattedMessage } from 'react-intl';
 
 import type { ModelTraceSpanNode, SearchMatch } from '../ModelTrace.types';
 import { ModelTraceExplorerCodeSnippet } from '../ModelTraceExplorerCodeSnippet';
