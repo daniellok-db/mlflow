@@ -1,4 +1,3 @@
-import { LegacySkeleton } from '@databricks/design-system';
 import { useCallback, useMemo, useRef } from 'react';
 import { connect } from 'react-redux';
 import { ReduxState } from '../../../../../redux-types';
@@ -22,6 +21,7 @@ import type { RunsGroupByConfig } from '../../../experiment-page/utils/experimen
 import { useGroupedChartRunData } from '../../../runs-compare/hooks/useGroupedChartRunData';
 import { RunsChartsGlobalLineChartConfig } from '../../../experiment-page/models/ExperimentPageUIState';
 import { useLineChartGlobalConfig } from '../hooks/useLineChartGlobalConfig';
+import { RunsChartCardLoadingPlaceholder } from '../cards/ChartCard.common';
 
 export const RunsChartsConfigureLineChartPreviewImpl = ({
   previewData,
@@ -124,7 +124,7 @@ export const RunsChartsConfigureLineChartPreviewImpl = ({
   );
 
   if (isLoading) {
-    return <LegacySkeleton />;
+    return <RunsChartCardLoadingPlaceholder />;
   }
 
   const checkValidRange = (

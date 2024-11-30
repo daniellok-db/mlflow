@@ -11,12 +11,8 @@ import {
   Spinner,
 } from '@databricks/design-system';
 import { Theme } from '@emotion/react';
-import { PropsWithChildren, ReactNode, memo, useCallback, useRef } from 'react';
-import { useDragAndDropElement } from '../../../../../common/hooks/useDragAndDropElement';
-import {
-  shouldEnableDraggableChartsGridLayout,
-  shouldUseNewRunRowsVisibilityModel,
-} from '../../../../../common/utils/FeatureUtils';
+import React, { PropsWithChildren, ReactNode, memo, useCallback, forwardRef } from 'react';
+import { shouldUseNewRunRowsVisibilityModel } from '../../../../../common/utils/FeatureUtils';
 import { FormattedMessage } from 'react-intl';
 import { RunsChartsRunData } from '../RunsCharts.common';
 import type { RunsChartsCardConfig } from '../../runs-charts.types';
@@ -52,7 +48,7 @@ export interface RunsChartCardVisibilityProps {
 
 export type RunsChartCardSetFullscreenFn = (chart: {
   config: RunsChartsCardConfig;
-  title: string;
+  title: string | ReactNode;
   subtitle: ReactNode;
 }) => void;
 
@@ -143,27 +139,6 @@ export const RunsChartCardWrapperRaw = ({
 }: PropsWithChildren<ChartCardWrapperProps>) => {
   const { theme } = useDesignSystemTheme();
 
-  const { dragHandleRef, dragPreviewRef, dropTargetRef, isDraggingOtherGroup, isOver } = (() => {
-    // If draggable charts grid layout is enabled, don't use local drag and drop
-    // but rely on the visibility provided by props instead
-    if (shouldEnableDraggableChartsGridLayout()) {
-      return {
-        dragHandleRef: undefined,
-        dragPreviewRef: undefined,
-        dropTargetRef: undefined,
-        isDraggingOtherGroup: false,
-        isOver: false,
-      };
-    }
-    // We can safely disable the eslint rule here because flag evaluation is stable
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    return useDragAndDropElement({
-      dragGroupKey,
-      dragKey: uuid || '',
-      onDrop: onReorderWith,
-    });
-  })();
-
   const onMoveUp = useCallback(
     () => onReorderWith(uuid || '', previousChartUuid || ''),
     [onReorderWith, uuid, previousChartUuid],
@@ -173,11 +148,13 @@ export const RunsChartCardWrapperRaw = ({
     [onReorderWith, uuid, nextChartUuid],
   );
 
+  const usingCustomTitle = React.isValidElement(title);
+
   return (
     <div
       css={{
         // Either use provided height or default to 360
-        height: shouldEnableDraggableChartsGridLayout() ? height ?? 360 : 360,
+        height: height ?? 360,
         overflow: 'hidden',
         display: 'grid',
         gridTemplateRows: 'auto 1fr',
@@ -191,15 +168,7 @@ export const RunsChartCardWrapperRaw = ({
         transition: 'opacity 0.12s',
         position: 'relative',
       }}
-      style={{
-        opacity: isDraggingOtherGroup ? 0.1 : isOver ? 0.5 : 1,
-      }}
       data-testid="experiment-view-compare-runs-card"
-      ref={(element) => {
-        // Use this element for both drag preview and drop target
-        dragPreviewRef?.(element);
-        dropTargetRef?.(element);
-      }}
     >
       <div
         css={{
@@ -208,10 +177,9 @@ export const RunsChartCardWrapperRaw = ({
         }}
       >
         <div
-          ref={dragHandleRef}
           data-testid="experiment-view-compare-runs-card-drag-handle"
           css={{
-            marginTop: theme.spacing.xs,
+            marginTop: usingCustomTitle ? theme.spacing.sm : theme.spacing.xs,
             marginRight: theme.spacing.sm,
             cursor: 'grab',
           }}
@@ -219,22 +187,26 @@ export const RunsChartCardWrapperRaw = ({
         >
           <DragIcon />
         </div>
-        <div css={{ overflow: 'hidden', flex: 1, flexShrink: 1 }}>
-          <Typography.Title
-            title={String(title)}
-            level={4}
-            css={{
-              marginBottom: 0,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {title}
-          </Typography.Title>
-          {subtitle && <span css={styles.subtitle(theme)}>{subtitle}</span>}
-          {tooltip && <LegacyInfoTooltip css={{ verticalAlign: 'middle' }} title={tooltip} />}
-        </div>
+        {usingCustomTitle ? (
+          title
+        ) : (
+          <div css={{ overflow: 'hidden', flex: 1, flexShrink: 1 }}>
+            <Typography.Title
+              title={String(title)}
+              level={4}
+              css={{
+                marginBottom: 0,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {title}
+            </Typography.Title>
+            {subtitle && <span css={styles.subtitle(theme)}>{subtitle}</span>}
+            {tooltip && <LegacyInfoTooltip css={{ verticalAlign: 'middle' }} title={tooltip} />}
+          </div>
+        )}
         {isRefreshing && (
           <div
             css={{
@@ -393,3 +365,20 @@ const styles = {
 };
 
 export const RunsChartCardWrapper = memo(RunsChartCardWrapperRaw);
+
+export const RunsChartCardLoadingPlaceholder = forwardRef<
+  HTMLDivElement,
+  {
+    className?: string;
+    style?: React.CSSProperties;
+  }
+>(({ className, style }, ref) => (
+  <div
+    css={{ display: 'flex', height: '100%', justifyContent: 'center', alignItems: 'center' }}
+    className={className}
+    style={style}
+    ref={ref}
+  >
+    <Spinner />
+  </div>
+));

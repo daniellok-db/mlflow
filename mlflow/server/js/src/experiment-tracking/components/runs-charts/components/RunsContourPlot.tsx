@@ -17,6 +17,7 @@ import {
 } from './RunsCharts.common';
 import RunsMetricsLegendWrapper from './RunsMetricsLegendWrapper';
 import { createChartImageDownloadHandler } from '../hooks/useChartImageDownloadHandler';
+import { RunsChartCardLoadingPlaceholder } from './cards/ChartCard.common';
 
 export interface RunsContourPlotProps extends RunsPlotsCommonProps {
   /**
@@ -292,6 +293,7 @@ export const RunsContourPlot = React.memo(
           config={PLOT_CONFIG}
           onHover={mutableHoverCallback}
           onUnhover={unhoverCallback}
+          fallback={<RunsChartCardLoadingPlaceholder />}
         />
       </div>
     );

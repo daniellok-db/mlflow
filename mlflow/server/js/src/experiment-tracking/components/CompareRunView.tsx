@@ -743,7 +743,6 @@ const parsePythonDictString = (value: string) => {
     const jsonString = value.replace(/'/g, '"');
     return JSON.parse(jsonString);
   } catch (e) {
-    console.error('Failed to parse string to JSON:', e);
     return null;
   }
 };

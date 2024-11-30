@@ -229,4 +229,23 @@ describe('ShowArtifactLoggedTableView', () => {
       );
     });
   });
+
+  it.each([
+    { artifactContent: ['definitely-not-object-with-columns-and-data'], testName: 'non-standard array' },
+    { artifactContent: { data: [] }, testName: 'object without columns' },
+    { artifactContent: { columns: [] }, testName: 'object without data' },
+  ])('renders error message when artifact contents is a $testName', async ({ artifactContent }) => {
+    jest.mocked(getArtifactContent).mockImplementation(() => Promise.resolve(JSON.stringify(artifactContent)));
+
+    renderComponent();
+
+    // Wait for the render error message
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          "Unable to parse JSON file. The file should contain an object with 'columns' and 'data' keys.",
+        ),
+      ).toBeInTheDocument();
+    });
+  });
 });

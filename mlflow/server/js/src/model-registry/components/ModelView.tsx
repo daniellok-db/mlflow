@@ -10,7 +10,6 @@ import { ModelVersionTable } from './ModelVersionTable';
 import Utils from '../../common/utils/Utils';
 import { Link, NavigateFunction } from '../../common/utils/RoutingUtils';
 import { ModelRegistryRoutes } from '../routes';
-import { message } from 'antd';
 import { ACTIVE_STAGES } from '../constants';
 import { CollapsibleSection } from '../../common/components/CollapsibleSection';
 import { EditableNote } from '../../common/components/EditableNote';
@@ -26,6 +25,7 @@ import { ModelVersionInfoEntity, type ModelEntity } from '../../experiment-track
 import { shouldShowModelsNextUI } from '../../common/utils/FeatureUtils';
 import { ModelsNextUIToggleSwitch } from './ModelsNextUIToggleSwitch';
 import { withNextModelsUIContext } from '../hooks/useNextModelsUI';
+import { ErrorWrapper } from '../../common/utils/ErrorWrapper';
 
 export const StageFilters = {
   ALL: 'ALL',
@@ -162,11 +162,12 @@ export class ModelViewImpl extends React.Component<ModelViewImplProps, ModelView
         this.setState({ isTagsRequestPending: false });
         (form as any).resetFields();
       })
-      .catch((ex: any) => {
+      .catch((ex: ErrorWrapper | Error) => {
         this.setState({ isTagsRequestPending: false });
         // eslint-disable-next-line no-console -- TODO(FEINF-3587)
         console.error(ex);
-        message.error('Failed to add tag. Error: ' + ex.getUserVisibleError());
+        const message = ex instanceof ErrorWrapper ? ex.getMessageField() : ex.message;
+        Utils.displayGlobalErrorNotification('Failed to add tag. Error: ' + message);
       });
   };
 
@@ -174,10 +175,11 @@ export class ModelViewImpl extends React.Component<ModelViewImplProps, ModelView
     const { model } = this.props;
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const modelName = model.name;
-    return this.props.setRegisteredModelTagApi(modelName, name, value).catch((ex: any) => {
+    return this.props.setRegisteredModelTagApi(modelName, name, value).catch((ex: ErrorWrapper | Error) => {
       // eslint-disable-next-line no-console -- TODO(FEINF-3587)
       console.error(ex);
-      message.error('Failed to set tag. Error: ' + ex.getUserVisibleError());
+      const message = ex instanceof ErrorWrapper ? ex.getMessageField() : ex.message;
+      Utils.displayGlobalErrorNotification('Failed to set tag. Error: ' + message);
     });
   };
 
@@ -185,10 +187,11 @@ export class ModelViewImpl extends React.Component<ModelViewImplProps, ModelView
     const { model } = this.props;
     // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const modelName = model.name;
-    return this.props.deleteRegisteredModelTagApi(modelName, name).catch((ex: any) => {
+    return this.props.deleteRegisteredModelTagApi(modelName, name).catch((ex: ErrorWrapper | Error) => {
       // eslint-disable-next-line no-console -- TODO(FEINF-3587)
       console.error(ex);
-      message.error('Failed to delete tag. Error: ' + ex.getUserVisibleError());
+      const message = ex instanceof ErrorWrapper ? ex.getMessageField() : ex.message;
+      Utils.displayGlobalErrorNotification('Failed to delete tag. Error: ' + message);
     });
   };
 

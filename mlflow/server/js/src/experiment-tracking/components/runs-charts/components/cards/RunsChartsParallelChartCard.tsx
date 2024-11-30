@@ -12,12 +12,9 @@ import {
   RunsChartsChartsDragGroup,
   RunsChartCardFullScreenProps,
   RunsChartCardVisibilityProps,
+  RunsChartCardLoadingPlaceholder,
 } from './ChartCard.common';
-import { useIsInViewport } from '../../hooks/useIsInViewport';
-import {
-  shouldEnableDraggableChartsGridLayout,
-  shouldUseNewRunRowsVisibilityModel,
-} from '../../../../../common/utils/FeatureUtils';
+import { shouldUseNewRunRowsVisibilityModel } from '../../../../../common/utils/FeatureUtils';
 import { FormattedMessage } from 'react-intl';
 import { useUpdateExperimentViewUIState } from '../../../experiment-page/contexts/ExperimentPageUIStateContext';
 import { downloadChartDataCsv } from '../../../experiment-page/utils/experimentPage.common-utils';
@@ -168,14 +165,9 @@ export const RunsChartsParallelChartCard = ({
     return parallelCoordsData.length === 0;
   }, [parallelCoordsData]);
 
-  const { elementRef, isInViewport: isInViewportInternal } = useIsInViewport({
-    enabled: !shouldEnableDraggableChartsGridLayout(),
-  });
-
   // If the chart is in fullscreen mode, we always render its body.
   // Otherwise, we only render the chart if it is in the viewport.
-  // Viewport flag is either consumed from the prop (new approach) or calculated internally (legacy).
-  const isInViewport = fullScreen || (isInViewportProp ?? isInViewportInternal);
+  const isInViewport = fullScreen || isInViewportProp;
 
   const { setTooltip, resetTooltip, selectedRunUuid, closeContextMenu } = useRunsChartsTooltip(config);
 
@@ -217,7 +209,6 @@ export const RunsChartsParallelChartCard = ({
               height: fullScreen ? '100%' : undefined,
             },
           ]}
-          ref={elementRef}
         >
           {isInViewport ? (
             <LazyParallelCoordinatesPlot
@@ -229,6 +220,7 @@ export const RunsChartsParallelChartCard = ({
               axesRotateThreshold={8}
               selectedRunUuid={selectedRunUuid}
               closeContextMenu={closeContextMenu}
+              fallback={<RunsChartCardLoadingPlaceholder css={{ flex: 1 }} />}
             />
           ) : null}
         </div>

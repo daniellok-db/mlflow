@@ -108,10 +108,9 @@ export const RunsChartsConfigureImageChart = ({
           max={maxMark}
           min={minMark}
           marks={stepMarks}
-          defaultValue={state.step}
+          value={state.step}
           disabled={Object.keys(stepMarks).length <= 1}
           onChange={updateStep}
-          step={null}
         />
       </RunsChartsConfigureField>
     </>

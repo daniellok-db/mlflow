@@ -12,7 +12,6 @@ import { PromoteModelButton } from './PromoteModelButton';
 import { SchemaTable } from './SchemaTable';
 import Utils from '../../common/utils/Utils';
 import { ModelStageTransitionDropdown } from './ModelStageTransitionDropdown';
-import { message } from 'antd';
 import { Descriptions } from '../../common/components/Descriptions';
 import { modelStagesMigrationGuideLink } from '../../common/constants';
 import { Alert, Modal, Button, InfoIcon, LegacyTooltip, Typography } from '@databricks/design-system';
@@ -39,6 +38,7 @@ import { ModelsNextUIToggleSwitch } from './ModelsNextUIToggleSwitch';
 import { shouldShowModelsNextUI } from '../../common/utils/FeatureUtils';
 import { ModelVersionViewAliasEditor } from './aliases/ModelVersionViewAliasEditor';
 import type { ModelEntity, RunInfoEntity } from '../../experiment-tracking/types';
+import { ErrorWrapper } from '../../common/utils/ErrorWrapper';
 
 type ModelVersionViewImplProps = {
   modelName?: string;
@@ -138,18 +138,21 @@ export class ModelVersionViewImpl extends React.Component<ModelVersionViewImplPr
         this.setState({ isTagsRequestPending: false });
         (form as any).resetFields();
       })
-      .catch((ex: any) => {
+      .catch((ex: ErrorWrapper | Error) => {
         this.setState({ isTagsRequestPending: false });
         // eslint-disable-next-line no-console -- TODO(FEINF-3587)
         console.error(ex);
-        message.error(
+
+        const userVisibleError = ex instanceof ErrorWrapper ? ex.getMessageField() : ex.message;
+
+        Utils.displayGlobalErrorNotification(
           this.props.intl.formatMessage(
             {
               defaultMessage: 'Failed to add tag. Error: {userVisibleError}',
               description: 'Text for user visible error when adding tag in model version view',
             },
             {
-              userVisibleError: ex.getUserVisibleError(),
+              userVisibleError,
             },
           ),
         );
@@ -159,17 +162,20 @@ export class ModelVersionViewImpl extends React.Component<ModelVersionViewImplPr
   handleSaveEdit = ({ name, value }: any) => {
     const { modelName } = this.props;
     const { version } = this.props.modelVersion;
-    return this.props.setModelVersionTagApi(modelName, version, name, value).catch((ex: any) => {
+    return this.props.setModelVersionTagApi(modelName, version, name, value).catch((ex: ErrorWrapper | Error) => {
       // eslint-disable-next-line no-console -- TODO(FEINF-3587)
       console.error(ex);
-      message.error(
+
+      const userVisibleError = ex instanceof ErrorWrapper ? ex.getMessageField() : ex.message;
+
+      Utils.displayGlobalErrorNotification(
         this.props.intl.formatMessage(
           {
             defaultMessage: 'Failed to set tag. Error: {userVisibleError}',
             description: 'Text for user visible error when setting tag in model version view',
           },
           {
-            userVisibleError: ex.getUserVisibleError(),
+            userVisibleError,
           },
         ),
       );
@@ -179,17 +185,20 @@ export class ModelVersionViewImpl extends React.Component<ModelVersionViewImplPr
   handleDeleteTag = ({ name }: any) => {
     const { modelName } = this.props;
     const { version } = this.props.modelVersion;
-    return this.props.deleteModelVersionTagApi(modelName, version, name).catch((ex: any) => {
+    return this.props.deleteModelVersionTagApi(modelName, version, name).catch((ex: ErrorWrapper | Error) => {
       // eslint-disable-next-line no-console -- TODO(FEINF-3587)
       console.error(ex);
-      message.error(
+
+      const userVisibleError = ex instanceof ErrorWrapper ? ex.getMessageField() : ex.message;
+
+      Utils.displayGlobalErrorNotification(
         this.props.intl.formatMessage(
           {
             defaultMessage: 'Failed to delete tag. Error: {userVisibleError}',
             description: 'Text for user visible error when deleting tag in model version view',
           },
           {
-            userVisibleError: ex.getUserVisibleError(),
+            userVisibleError,
           },
         ),
       );

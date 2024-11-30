@@ -43,6 +43,7 @@ import {
 import { type RunsChartsLineChartExpression, RunsChartsLineChartYAxisType } from '../runs-charts.types';
 import { useChartExpressionParser } from '../hooks/useChartExpressionParser';
 import { getExpressionChartsSortedMetricHistory } from '../utils/expressionCharts.utils';
+import { RunsChartCardLoadingPlaceholder } from './cards/ChartCard.common';
 
 export type LineChartTraceData = PlotlyData & {
   x?: number[] | undefined;
@@ -926,6 +927,7 @@ export const RunsMetricsLinePlot = React.memo(
           onHover={mutableHoverCallback}
           onUnhover={usingMultipleRunsHoverTooltip ? unhoverCallbackMultipleRuns : unhoverCallback}
           onInitialized={initHandler}
+          fallback={<RunsChartCardLoadingPlaceholder />}
         />
         {scanlineElement}
       </div>

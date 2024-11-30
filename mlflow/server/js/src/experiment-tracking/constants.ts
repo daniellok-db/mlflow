@@ -138,3 +138,8 @@ export const NUM_RUNS_TO_SUPPORT_FOR_LOG_IMAGE = 10;
 export const EPOCH_RELATIVE_TIME = 28800000;
 export const LINE_CHART_RELATIVE_TIME_THRESHOLD = 1000 * 60 * 60 * 24; // 1 day
 export const HOUR_IN_MILLISECONDS = 1000 * 60 * 60; // 1 hour
+
+export enum ExperimentPageTabName {
+  Models = 'models',
+  EvaluationMonitoring = 'evaluation-monitoring',
+}

@@ -6,8 +6,8 @@
  */
 
 import React from 'react';
-import _, { identity } from 'lodash';
-import { Button, ButtonProps, Modal, Spacer, LegacyTooltip, Typography } from '@databricks/design-system';
+import _, { identity, isUndefined } from 'lodash';
+import { Button, ButtonProps, Modal, Spacer, LegacyTooltip, Typography, ModalProps } from '@databricks/design-system';
 import { FormattedMessage, injectIntl, type IntlShape } from 'react-intl';
 import {
   CREATE_NEW_MODEL_OPTION_VALUE,

@@ -3,11 +3,7 @@ import type { RunsChartsRunData } from '../RunsCharts.common';
 import { RunsMetricsBarPlot } from '../RunsMetricsBarPlot';
 import { useRunsChartsTooltip } from '../../hooks/useRunsChartsTooltip';
 import type { RunsChartsBarCardConfig } from '../../runs-charts.types';
-import { useIsInViewport } from '../../hooks/useIsInViewport';
-import {
-  shouldEnableDraggableChartsGridLayout,
-  shouldUseNewRunRowsVisibilityModel,
-} from '../../../../../common/utils/FeatureUtils';
+import { shouldUseNewRunRowsVisibilityModel } from '../../../../../common/utils/FeatureUtils';
 import {
   RunsChartCardWrapper,
   type RunsChartCardReorderProps,
@@ -20,6 +16,7 @@ import { useChartImageDownloadHandler } from '../../hooks/useChartImageDownloadH
 import { downloadChartDataCsv } from '../../../experiment-page/utils/experimentPage.common-utils';
 import { customMetricBehaviorDefs } from '../../../experiment-page/utils/customMetricBehaviorUtils';
 import { RunsChartsNoDataFoundIndicator } from '../RunsChartsNoDataFoundIndicator';
+import { Tag, Typography } from '@databricks/design-system';
 
 export interface RunsChartsBarChartCardProps
   extends RunsChartCardReorderProps,
@@ -53,7 +50,7 @@ export const RunsChartsBarChartCard = ({
   isInViewport: isInViewportProp,
   ...reorderProps
 }: RunsChartsBarChartCardProps) => {
-  const usingDraggableChartsGridLayout = shouldEnableDraggableChartsGridLayout();
+  const dataKey = config.dataAccessKey ?? config.metricKey;
 
   const toggleFullScreenChart = () => {
     setFullScreenChart?.({
@@ -65,26 +62,21 @@ export const RunsChartsBarChartCard = ({
 
   const slicedRuns = useMemo(() => {
     if (shouldUseNewRunRowsVisibilityModel()) {
-      return chartRunData.filter(({ hidden, metrics }) => !hidden && metrics[config.metricKey]);
+      return chartRunData.filter(({ hidden, metrics }) => !hidden && metrics[dataKey]);
     }
     return chartRunData.slice(0, config.runsCountToCompare || 10).reverse();
-  }, [chartRunData, config]);
+  }, [chartRunData, config, dataKey]);
 
   const isEmptyDataset = useMemo(() => {
     const metricsInRuns = slicedRuns.flatMap(({ metrics }) => Object.keys(metrics));
-    return !metricsInRuns.includes(config.metricKey);
-  }, [config, slicedRuns]);
+    return !metricsInRuns.includes(dataKey);
+  }, [dataKey, slicedRuns]);
 
   const { setTooltip, resetTooltip, selectedRunUuid } = useRunsChartsTooltip(config);
 
-  const { elementRef, isInViewport: isInViewportInternal } = useIsInViewport({
-    enabled: !usingDraggableChartsGridLayout,
-  });
-
   // If the chart is in fullscreen mode, we always render its body.
   // Otherwise, we only render the chart if it is in the viewport.
-  // Viewport flag is either consumed from the prop (new approach) or calculated internally (legacy).
-  const isInViewport = fullScreen || (isInViewportProp ?? isInViewportInternal);
+  const isInViewport = fullScreen || isInViewportProp;
 
   const [imageDownloadHandler, setImageDownloadHandler] = useChartImageDownloadHandler();
 
@@ -96,12 +88,11 @@ export const RunsChartsBarChartCard = ({
           height: fullScreen ? '100%' : undefined,
         },
       ]}
-      ref={elementRef}
     >
       {isInViewport ? (
         <RunsMetricsBarPlot
           runsData={slicedRuns}
-          metricKey={config.metricKey}
+          metricKey={dataKey}
           displayRunNames={false}
           displayMetricKey={false}
           useDefaultHoverBox={false}
@@ -124,11 +115,27 @@ export const RunsChartsBarChartCard = ({
     return null;
   }
 
+  const chartTitle = (() => {
+    if (config.datasetName) {
+      return (
+        <div css={{ flex: 1, display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+          <Typography.Text title={config.metricKey} ellipsis bold>
+            <Tag componentId="mlflow.charts.bar_card_title.dataset_tag" css={{ marginRight: 0 }}>
+              {config.datasetName}
+            </Tag>{' '}
+            {config.metricKey}
+          </Typography.Text>
+        </div>
+      );
+    }
+    return customMetricBehaviorDefs[config.metricKey]?.displayName ?? config.displayName ?? config.metricKey;
+  })();
+
   return (
     <RunsChartCardWrapper
       onEdit={onEdit}
       onDelete={onDelete}
-      title={customMetricBehaviorDefs[config.metricKey]?.displayName ?? config.metricKey}
+      title={chartTitle}
       subtitle={<ChartRunsCountIndicator runsOrGroups={slicedRuns} />}
       uuid={config.uuid}
       dragGroupKey={RunsChartsChartsDragGroup.GENERAL_AREA}

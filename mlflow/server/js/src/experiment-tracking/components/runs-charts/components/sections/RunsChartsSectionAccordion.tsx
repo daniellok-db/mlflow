@@ -23,7 +23,7 @@ import { Empty } from '@databricks/design-system';
 import { useDesignSystemTheme } from '@databricks/design-system';
 import { Spacer } from '@databricks/design-system';
 import { useUpdateRunsChartsUIConfiguration } from '../../hooks/useRunsChartsUIConfiguration';
-import { isArray } from 'lodash';
+import { compact, isArray } from 'lodash';
 import { RunsChartCardSetFullscreenFn } from '../cards/ChartCard.common';
 import type { RunsGroupByConfig } from '../../../experiment-page/utils/experimentPage.group-row-utils';
 import { shouldUseRegexpBasedChartFiltering } from '../../../../../common/utils/FeatureUtils';
@@ -80,6 +80,9 @@ const chartMatchesFilter = (filter: string, config: RunsChartsCardConfig) => {
 const getChartMetricsAndParams = (config: RunsChartsCardConfig): string[] => {
   if (config.type === RunsChartType.BAR) {
     const barConfig = config as RunsChartsBarCardConfig;
+    if (barConfig.dataAccessKey) {
+      return [barConfig.metricKey, barConfig.dataAccessKey];
+    }
     return [barConfig.metricKey];
   } else if (config.type === RunsChartType.LINE) {
     const lineConfig = config as RunsChartsLineCardConfig;
@@ -116,6 +119,7 @@ export interface RunsChartsSectionAccordionProps {
   supportedChartTypes?: RunsChartType[] | undefined;
   setFullScreenChart: RunsChartCardSetFullscreenFn;
   globalLineChartConfig?: RunsChartsGlobalLineChartConfig;
+  noRunsSelectedEmptyState?: React.ReactElement;
 }
 
 export const RunsChartsSectionAccordion = ({
@@ -135,6 +139,7 @@ export const RunsChartsSectionAccordion = ({
   hideEmptyCharts,
   setFullScreenChart = () => {},
   globalLineChartConfig,
+  noRunsSelectedEmptyState,
 }: RunsChartsSectionAccordionProps) => {
   const updateUIState = useUpdateRunsChartsUIConfiguration();
   const [editSection, setEditSection] = useState(-1);
@@ -353,16 +358,18 @@ export const RunsChartsSectionAccordion = ({
 
   if (noRunsSelected) {
     return (
-      <div css={{ marginTop: theme.spacing.lg }}>
-        <Empty
-          description={
-            <FormattedMessage
-              defaultMessage="All runs are hidden. Select at least one run to view charts."
-              description="Experiment tracking > runs charts > indication displayed when no runs are selected for comparison"
-            />
-          }
-        />
-      </div>
+      noRunsSelectedEmptyState ?? (
+        <div css={{ marginTop: theme.spacing.lg }}>
+          <Empty
+            description={
+              <FormattedMessage
+                defaultMessage="All runs are hidden. Select at least one run to view charts."
+                description="Experiment tracking > runs charts > indication displayed when no runs are selected for comparison"
+              />
+            }
+          />
+        </div>
+      )
     );
   }
 

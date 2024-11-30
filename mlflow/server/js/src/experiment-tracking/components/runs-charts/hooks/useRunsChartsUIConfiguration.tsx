@@ -112,7 +112,7 @@ export const useConfirmChartCardConfigurationFn = () => {
         ...current,
         compareRunCharts: current.compareRunCharts?.map((existingChartCard) => {
           if (existingChartCard.uuid === configuredCard.uuid) {
-            return serializedCard;
+            return { ...serializedCard, uuid: existingChartCard.uuid };
           }
           return existingChartCard;
         }),

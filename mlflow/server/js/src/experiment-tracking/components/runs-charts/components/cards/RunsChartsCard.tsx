@@ -12,7 +12,6 @@ import type {
 } from '../../runs-charts.types';
 import { RunsChartsRunData } from '../RunsCharts.common';
 import {
-  shouldEnableDraggableChartsGridLayout,
   shouldEnableDifferenceViewCharts,
   shouldEnableImageGridCharts,
   shouldUseNewRunRowsVisibilityModel,
@@ -74,9 +73,6 @@ const RunsChartsCardRaw = ({
   isInViewport,
   isInViewportDeferred,
 }: RunsChartsCardProps) => {
-  const usingGridLayout = shouldEnableDraggableChartsGridLayout();
-  const chartElementKey = `${cardConfig.uuid}-${index}-${sectionIndex}`;
-
   const reorderProps = useMemo(
     () => ({
       onReorderWith,
@@ -100,7 +96,6 @@ const RunsChartsCardRaw = ({
   const commonChartProps = useMemo(
     () => ({
       fullScreen,
-      key: usingGridLayout ? undefined : chartElementKey,
       autoRefreshEnabled,
       groupBy,
       hideEmptyCharts,
@@ -112,8 +107,6 @@ const RunsChartsCardRaw = ({
     }),
     [
       fullScreen,
-      usingGridLayout,
-      chartElementKey,
       autoRefreshEnabled,
       groupBy,
       editProps,

@@ -13,8 +13,6 @@ export const shouldDisableLegacyRunCompareCharts = () => false;
  */
 export const shouldEnableDeepLearningUIPhase3 = () => true;
 
-export const shouldUseUnifiedRunCharts = () => false;
-
 export const shouldEnableExperimentPageAutoRefresh = () => false;
 
 export const shouldEnableRunDetailsPageAutoRefresh = () => false;
@@ -65,11 +63,6 @@ export const shouldEnableTaggingMultipleRuns = () => false;
 export const shouldEnableToggleIndividualRunsInGroups = () => false;
 
 /**
- * Enables draggable and resizable charts grid
- */
-export const shouldEnableDraggableChartsGridLayout = () => false;
-
-/**
  * Update relative time axis to use date
  */
 export const shouldEnableRelativeTimeDateAxis = () => false;
@@ -92,6 +85,11 @@ export const shouldUseRunRowsVisibilityMap = () => true;
  * Determines if logged models UI (part of model-centric IA shift) is enabled
  */
 export const isExperimentLoggedModelsUIEnabled = () => false;
+
+/**
+ * Determines if evaluation results online monitoring UI is enabled
+ */
+export const isExperimentEvalResultsMonitoringUIEnabled = () => false;
 
 /**
  * Flags enabling fetching data via GraphQL for particular views:

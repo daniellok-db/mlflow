@@ -61,7 +61,13 @@ export const TraceDataDrawer = ({
       return getTraceDisplayName(traceInfoToUse as ModelTraceInfo);
     }
     return requestId;
-  }, [loadingTraceInfo, loadingInternalTracingInfo, traceInfoToUse, requestId, theme]);
+  }, [
+    // Memo dependency list
+    loadingTraceInfo,
+    loadingInternalTracingInfo,
+    traceInfoToUse,
+    requestId,
+  ]);
 
   // Construct the model trace object with the trace info and trace data
   const combinedModelTrace = useMemo(

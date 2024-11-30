@@ -30,8 +30,12 @@ import { TestApolloProvider } from '../../../../common/utils/TestApolloProvider'
 
 jest.mock('../../../../common/utils/FeatureUtils', () => ({
   ...jest.requireActual('../../../../common/utils/FeatureUtils'),
-  shouldEnableDraggableChartsGridLayout: jest.fn(() => true),
   shouldEnableHidingChartsWithNoData: jest.fn(() => true),
+}));
+
+// Mock useIsInViewport hook to simulate that the chart element is in the viewport
+jest.mock('../hooks/useIsInViewport', () => ({
+  useIsInViewport: () => ({ isInViewport: true, setElementRef: jest.fn() }),
 }));
 
 jest.setTimeout(60000); // Larger timeout for integration testing (drag and drop simlation)

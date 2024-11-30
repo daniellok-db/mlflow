@@ -63,7 +63,8 @@ export const btoaUtf8 = (input: any) => {
     let enc4 = chr3 & 63;
 
     if (isNaN(chr2)) {
-      enc3 = enc4 = 64;
+      enc4 = 64;
+      enc3 = enc4;
     } else if (isNaN(chr3)) {
       enc4 = 64;
     }

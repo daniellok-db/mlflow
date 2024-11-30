@@ -1,11 +1,9 @@
-import { LegacySkeleton } from '@databricks/design-system';
-import { ReactNode, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { RunsChartsRunData, RunsChartsLineChartXAxisType, removeOutliersFromMetricHistory } from '../RunsCharts.common';
 import { RunsMetricsLinePlot } from '../RunsMetricsLinePlot';
 import { RunsChartsTooltipMode, useRunsChartsTooltip } from '../../hooks/useRunsChartsTooltip';
 import {
   RunsChartsLineChartYAxisType,
-  type ChartRange,
   type RunsChartsCardConfig,
   type RunsChartsLineCardConfig,
 } from '../../runs-charts.types';
@@ -16,17 +14,16 @@ import {
   ChartRunsCountIndicator,
   RunsChartCardVisibilityProps,
   RunsChartCardSizeProps,
+  RunsChartCardLoadingPlaceholder,
 } from './ChartCard.common';
 import { useSampledMetricHistory } from '../../hooks/useSampledMetricHistory';
 import { compact, intersection, isEqual, isUndefined, pick, uniq } from 'lodash';
-import { useIsInViewport } from '../../hooks/useIsInViewport';
 import {
   shouldEnableDeepLearningUIPhase3,
   shouldUseNewRunRowsVisibilityModel,
   shouldEnableRelativeTimeDateAxis,
   shouldEnableManualRangeControls,
   shouldEnableChartExpressions,
-  shouldEnableDraggableChartsGridLayout,
 } from '../../../../../common/utils/FeatureUtils';
 import { findAbsoluteTimestampRangeForRelativeRange } from '../../utils/findChartStepsByTimestamp';
 import { Figure } from 'react-plotly.js';
@@ -41,7 +38,6 @@ import {
   useChartImageDownloadHandler,
 } from '../../hooks/useChartImageDownloadHandler';
 import { downloadChartMetricHistoryCsv } from '../../../experiment-page/utils/experimentPage.common-utils';
-import { useConfirmChartCardConfigurationFn } from '../../hooks/useRunsChartsUIConfiguration';
 import { RunsChartsNoDataFoundIndicator } from '../RunsChartsNoDataFoundIndicator';
 import { RunsChartsGlobalLineChartConfig } from '../../../experiment-page/models/ExperimentPageUIState';
 import { useLineChartGlobalConfig } from '../hooks/useLineChartGlobalConfig';
@@ -107,7 +103,6 @@ export const RunsChartsLineChartCard = ({
 }: RunsChartsLineChartCardProps) => {
   const usingMultipleRunsHoverTooltip = shouldEnableDeepLearningUIPhase3();
   const usingManualRangeControls = shouldEnableManualRangeControls();
-  const usingDraggableChartsGridLayout = shouldEnableDraggableChartsGridLayout();
 
   const { xAxisKey, selectedXAxisMetricKey, lineSmoothness } = useLineChartGlobalConfig(config, globalLineChartConfig);
 
@@ -172,19 +167,10 @@ export const RunsChartsLineChartCard = ({
     usingMultipleRunsHoverTooltip ? RunsChartsTooltipMode.MultipleTracesWithScanline : RunsChartsTooltipMode.Simple,
   );
 
-  const {
-    elementRef,
-    isInViewport: isInViewportInternal,
-    isInViewportDeferred: isInViewportDeferreed,
-  } = useIsInViewport({
-    enabled: !usingDraggableChartsGridLayout,
-  });
-
   // If the chart is in fullscreen mode, we always render its body.
   // Otherwise, we only render the chart if it is in the viewport.
-  // Viewport flag is either consumed from the prop (new approach) or calculated internally (legacy).
-  const isInViewport = fullScreen || (isInViewportProp ?? isInViewportInternal);
-  const isInViewportDeferred = fullScreen || (isInViewportDeferredProp ?? isInViewportDeferreed);
+  const isInViewport = fullScreen || isInViewportProp;
+  const isInViewportDeferred = fullScreen || isInViewportDeferredProp;
 
   const { aggregateFunction } = groupBy || {};
 
@@ -399,10 +385,9 @@ export const RunsChartsLineChartCard = ({
           height: fullScreen ? '100%' : undefined,
         },
       ]}
-      ref={elementRef}
     >
       {!renderChartBody ? null : renderSkeleton ? (
-        <LegacySkeleton />
+        <RunsChartCardLoadingPlaceholder />
       ) : (
         <RunsMetricsLinePlot
           runsData={chartData}

@@ -14,7 +14,7 @@ import {
   LegacyTooltip,
   useDesignSystemTheme,
 } from '@databricks/design-system';
-import { isUndefined } from 'lodash';
+import { isArray, isObject, isUndefined } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
   getArtifactContent,
@@ -412,7 +412,16 @@ export const ShowArtifactLoggedTableView = React.memo(
       setCurPath(path);
     }, [path, runUuid, isLoggedModelsMode, loggedModelId]);
 
-    const data = useMemo(() => parseJSONSafe(text), [text]);
+    const data = useMemo<{
+      columns: string[];
+      data: any[][];
+    }>(() => {
+      const parsedJSON = parseJSONSafe(text);
+      if (!parsedJSON || !isArray(parsedJSON?.columns) || !isArray(parsedJSON?.data)) {
+        return undefined;
+      }
+      return parsedJSON;
+    }, [text]);
 
     const { theme } = useDesignSystemTheme();
 
@@ -450,8 +459,8 @@ export const ShowArtifactLoggedTableView = React.memo(
       if (!data) {
         return renderErrorState(
           <FormattedMessage
-            defaultMessage="Unable to parse JSON file"
-            description="Run page > artifact view > logged table view > unable to parse JSON file error"
+            defaultMessage="Unable to parse JSON file. The file should contain an object with 'columns' and 'data' keys."
+            description="An error message displayed when the logged table JSON file is malformed or does not contain 'columns' and 'data' keys"
           />,
         );
       }

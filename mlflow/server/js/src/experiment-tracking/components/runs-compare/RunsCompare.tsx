@@ -27,7 +27,6 @@ import { Input } from '@databricks/design-system';
 import { useIntl } from 'react-intl';
 import {
   shouldEnableGlobalLineChartConfig,
-  shouldEnableDraggableChartsGridLayout,
   shouldEnableImageGridCharts,
   shouldUseNewRunRowsVisibilityModel,
   shouldUseRegexpBasedChartFiltering,
@@ -184,7 +183,12 @@ export const RunsCompareImpl = ({
   );
 
   const [fullScreenChart, setFullScreenChart] = useState<
-    { config: RunsChartsCardConfig; title: string; subtitle: ReactNode } | undefined
+    | {
+        config: RunsChartsCardConfig;
+        title: string | ReactNode;
+        subtitle: ReactNode;
+      }
+    | undefined
   >(undefined);
 
   const addNewChartCard = (metricSectionId: string) => {
@@ -366,9 +370,6 @@ export const RunsCompareImpl = ({
 
   // If using draggable grid layout, already filter out charts that are empty or deleted
   const visibleChartCards = useMemo(() => {
-    if (!shouldEnableDraggableChartsGridLayout()) {
-      return compareRunCharts;
-    }
     if (hideEmptyCharts) {
       return compareRunCharts?.filter((chartCard) => !chartCard.deleted && !isEmptyChartCard(chartData, chartCard));
     }

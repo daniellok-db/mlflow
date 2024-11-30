@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { RunsChartType, RunsChartsLineCardConfig } from '../runs-charts.types';
 import { RunsChartsLineChartXAxisType } from './RunsCharts.common';
 import { RunsChartsGlobalChartSettingsDropdown } from './RunsChartsGlobalChartSettingsDropdown';
@@ -28,9 +28,7 @@ jest.mock('../../../../common/utils/FeatureUtils', () => ({
 }));
 
 jest.mock('../hooks/useIsInViewport', () => ({
-  useIsInViewport: jest
-    .fn()
-    .mockImplementation(() => ({ isInViewport: true, isInViewportDeferred: true, elementRef: undefined })),
+  useIsInViewport: jest.fn().mockImplementation(() => ({ isInViewport: true, setElementRef: jest.fn() })),
 }));
 
 // mock line plot
@@ -114,6 +112,8 @@ describe('RunsChartsGlobalChartSettingsDropdown', () => {
                       canMoveDown
                       canMoveUp
                       globalLineChartConfig={uiState.globalLineChartConfig}
+                      isInViewport
+                      isInViewportDeferred
                     />
                   ))}
                 </DragAndDropProvider>
@@ -205,6 +205,7 @@ describe('RunsChartsGlobalChartSettingsDropdown', () => {
     await userEvent.click(screen.getByLabelText('Configure charts'));
     await userEvent.clear(screen.getByRole('spinbutton'));
     await userEvent.type(screen.getByRole('spinbutton'), '42');
+    fireEvent.blur(screen.getByRole('spinbutton'));
 
     // Expect beta chart to reflect the changes while alpha should stay the same
     expect(screen.getByTestId('chart-alpha').textContent).toContain('smoothness: 0');

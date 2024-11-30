@@ -9,7 +9,8 @@ import { IntlProvider } from 'react-intl';
 export const stableNormalRandom = (seed = 0, g = 10) => {
   const random = () => {
     // eslint-disable-next-line no-param-reassign
-    let t = (seed += 0x6d2b79f5);
+    seed += 0x6d2b79f5;
+    let t = seed;
     // eslint-disable-next-line no-bitwise
     t = Math.imul(t ^ (t >>> 15), t | 1);
     // eslint-disable-next-line no-bitwise

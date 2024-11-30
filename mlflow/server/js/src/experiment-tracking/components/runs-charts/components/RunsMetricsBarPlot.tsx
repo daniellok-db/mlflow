@@ -20,6 +20,7 @@ import type { MetricEntity } from '../../../types';
 import RunsMetricsLegendWrapper from './RunsMetricsLegendWrapper';
 import { createChartImageDownloadHandler } from '../hooks/useChartImageDownloadHandler';
 import { customMetricBehaviorDefs } from '../../experiment-page/utils/customMetricBehaviorUtils';
+import { RunsChartCardLoadingPlaceholder } from './cards/ChartCard.common';
 
 // We're not using params in bar plot
 export type BarPlotRunData = Omit<RunsChartsRunData, 'params' | 'tags' | 'images'>;
@@ -266,6 +267,7 @@ export const RunsMetricsBarPlot = React.memo(
           config={PLOT_CONFIG}
           onHover={mutableHoverCallback}
           onUnhover={unhoverCallback}
+          fallback={<RunsChartCardLoadingPlaceholder />}
         />
       </div>
     );

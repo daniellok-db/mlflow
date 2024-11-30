@@ -15,6 +15,7 @@ import {
   RunsChartsParallelCardConfig,
   RunsChartsDifferenceCardConfig,
   RunsChartsImageCardConfig,
+  type RunsChartsMetricByDatasetEntry,
 } from '../runs-charts.types';
 
 import { ReactComponent as ChartBarIcon } from '../../../../common/static/chart-bar.svg';
@@ -49,6 +50,8 @@ import type { RunsGroupByConfig } from '../../experiment-page/utils/experimentPa
 import { RunsChartsConfigureImageChart } from './config/RunsChartsConfigureImageChart';
 import { RunsChartsConfigureImageChartPreview } from './config/RunsChartsConfigureImageChart.preview';
 import type { RunsChartsGlobalLineChartConfig } from '../../experiment-page/models/ExperimentPageUIState';
+import { isEmpty } from 'lodash';
+import { RunsChartsConfigureScatterChartWithDatasets } from './config/RunsChartsConfigureScatterChartWithDatasets';
 
 const previewComponentsMap: Record<
   RunsChartType,
@@ -79,12 +82,14 @@ export const RunsChartsConfigureModal = ({
   config,
   chartRunData,
   metricKeyList,
+  metricKeysByDataset,
   paramKeyList,
   groupBy,
   supportedChartTypes,
   globalLineChartConfig,
 }: {
   metricKeyList: string[];
+  metricKeysByDataset?: RunsChartsMetricByDatasetEntry[];
   paramKeyList: string[];
   config: RunsChartsCardConfig;
   chartRunData: RunsChartsRunData[];
@@ -133,6 +138,7 @@ export const RunsChartsConfigureModal = ({
       return (
         <RunsChartsConfigureBarChart
           metricKeyList={metricKeyList}
+          metricKeysByDataset={metricKeysByDataset}
           state={currentFormState as RunsChartsBarCardConfig}
           onStateChange={setCurrentFormState}
         />
@@ -168,6 +174,16 @@ export const RunsChartsConfigureModal = ({
       );
     }
     if (type === RunsChartType.SCATTER) {
+      if (!isEmpty(metricKeysByDataset)) {
+        return (
+          <RunsChartsConfigureScatterChartWithDatasets
+            paramKeyList={paramKeyList}
+            metricKeysByDataset={metricKeysByDataset}
+            state={currentFormState as RunsChartsScatterCardConfig}
+            onStateChange={setCurrentFormState}
+          />
+        );
+      }
       return (
         <RunsChartsConfigureScatterChart
           metricKeyList={metricKeyList}

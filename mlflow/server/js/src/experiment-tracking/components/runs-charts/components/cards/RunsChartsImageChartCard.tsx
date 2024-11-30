@@ -148,12 +148,11 @@ export const RunsChartsImageChartCard = ({
       >
         <div css={{ width: '350px' }}>
           <LineSmoothSlider
-            defaultValue={tmpConfig.step}
+            value={tmpConfig.step}
             onChange={tmpStepChange}
             max={maxMark}
             min={minMark}
             marks={stepMarks}
-            step={null}
             disabled={Object.keys(stepMarks).length <= 1}
             onAfterChange={updateStep}
           />

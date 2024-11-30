@@ -48,8 +48,12 @@ jest.mock('../../../common/utils/FeatureUtils', () => ({
   ...jest.requireActual('../../../common/utils/FeatureUtils'),
   shouldEnableHidingChartsWithNoData: jest.fn().mockImplementation(() => false),
   shouldEnableDifferenceViewCharts: jest.fn().mockImplementation(() => false),
-  shouldEnableDraggableChartsGridLayout: jest.fn().mockImplementation(() => false),
   shouldUseRegexpBasedChartFiltering: jest.fn().mockImplementation(() => false),
+}));
+
+// Mock useIsInViewport hook to simulate that the chart element is in the viewport
+jest.mock('../runs-charts/hooks/useIsInViewport', () => ({
+  useIsInViewport: () => ({ isInViewport: true, setElementRef: jest.fn() }),
 }));
 
 jest.setTimeout(30000); // Larger timeout for integration testing
@@ -225,99 +229,6 @@ describe('RunsCompare', () => {
     return firstSectionHeading.closest('[data-testid="experiment-view-compare-runs-section-header"]') as HTMLElement;
   };
 
-  test('should render multiple charts and reorder using drag and drop', async () => {
-    createComponentMock({
-      // Let's have at least one run in the comparison
-      comparedRuns: [{ runUuid: 'run_latest', runName: 'Last run', runInfo: { runUuid: 'run_latest' } } as any],
-    });
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'metric-beta' })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: 'metric-alpha' })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: 'metric-gamma' })).toBeInTheDocument();
-    });
-
-    await waitFor(() => {
-      expect(currentUIState.compareRunCharts?.map(({ uuid }) => uuid)).toEqual([
-        'chart-parallel',
-        'chart-alpha',
-        'chart-beta',
-        'chart-gamma',
-        'chart-omega',
-      ]);
-    });
-
-    let betaChartArea = getChartArea('metric-beta');
-    let alphaChartArea = getChartArea('metric-alpha');
-    let gammaChartArea = getChartArea('metric-gamma');
-
-    const betaHandle = within(betaChartArea).getByTestId('experiment-view-compare-runs-card-drag-handle');
-    alphaChartArea = getChartArea('metric-alpha');
-
-    // Drag "beta" chart into the "alpha" chart position
-    act(() => {
-      fireEvent.dragStart(betaHandle);
-      fireEvent.dragEnter(alphaChartArea);
-      fireEvent.drop(alphaChartArea);
-    });
-
-    // Verify that the charts are reordered
-    await waitFor(() => {
-      expect(currentUIState.compareRunCharts?.map(({ uuid }) => uuid)).toEqual([
-        'chart-parallel',
-        'chart-beta',
-        'chart-alpha',
-        'chart-gamma',
-        'chart-omega',
-      ]);
-    });
-
-    gammaChartArea = getChartArea('metric-gamma');
-    betaChartArea = getChartArea('metric-beta');
-
-    let gammaHandle = within(gammaChartArea).getByTestId('experiment-view-compare-runs-card-drag-handle');
-
-    // Drag "gamma" chart into the "beta" chart position
-    act(() => {
-      fireEvent.dragStart(gammaHandle);
-      fireEvent.dragEnter(betaChartArea);
-      fireEvent.drop(betaChartArea);
-    });
-
-    // Verify that the charts are reordered
-    await waitFor(() => {
-      expect(currentUIState.compareRunCharts?.map(({ uuid }) => uuid)).toEqual([
-        'chart-parallel',
-        'chart-gamma',
-        'chart-beta',
-        'chart-alpha',
-        'chart-omega',
-      ]);
-    });
-
-    alphaChartArea = getChartArea('metric-alpha');
-    gammaChartArea = getChartArea('metric-gamma');
-    gammaHandle = within(gammaChartArea).getByTestId('experiment-view-compare-runs-card-drag-handle');
-
-    // Drag "gamma" chart into the "alpha" chart position
-    act(() => {
-      fireEvent.dragStart(gammaHandle);
-      fireEvent.dragEnter(alphaChartArea);
-      fireEvent.drop(alphaChartArea);
-    });
-
-    // Verify that the charts are reordered
-    await waitFor(() => {
-      expect(currentUIState.compareRunCharts?.map(({ uuid }) => uuid)).toEqual([
-        'chart-parallel',
-        'chart-beta',
-        'chart-alpha',
-        'chart-gamma',
-        'chart-omega',
-      ]);
-    });
-  });
-
   test('drag and drop (reorder) across sections', async () => {
     createComponentMock({
       // Let's have at least one run in the comparison
@@ -330,58 +241,27 @@ describe('RunsCompare', () => {
       expect(screen.getByRole('heading', { name: 'tmp/metric-omega' })).toBeInTheDocument();
     });
 
-    const betaChartArea = getChartArea('metric-beta');
-    let alphaChartArea = getChartArea('metric-alpha');
-    let omegaChartArea = getChartArea('tmp/metric-omega');
+    // Find all sections (draggable sub-grids)
+    const allSections = screen.getAllByTestId('draggable-chart-cards-grid');
+    // Locate "tmp/" section and "metric-beta" chart element
+    const tmpGridArea = allSections.find((section) => section.textContent?.includes('tmp/metric-omega')) as HTMLElement;
 
-    const betaHandle = within(betaChartArea).getByTestId('experiment-view-compare-runs-card-drag-handle');
-    // Drag "beta" chart into the "omega" chart position
-    act(() => {
-      fireEvent.dragStart(betaHandle);
-      fireEvent.dragEnter(omegaChartArea);
-      fireEvent.drop(omegaChartArea);
-    });
+    const betaMetricChartElement = getChartArea('metric-beta');
+    const betaMetricChartHandle = within(betaMetricChartElement).getByTestId(
+      'experiment-view-compare-runs-card-drag-handle',
+    );
 
-    await waitFor(() => {
-      expect(currentUIState.compareRunCharts?.map(({ uuid }) => uuid)).toEqual([
-        'chart-parallel',
-        'chart-alpha',
-        'chart-gamma',
-        'chart-beta',
-        'chart-omega',
-      ]);
-    });
+    // Drag "beta" chart into the "tmp" chart area which is occupied by "omega"
+    fireEvent.mouseDown(betaMetricChartHandle);
+    fireEvent.mouseMove(tmpGridArea);
+    fireEvent.mouseUp(betaMetricChartHandle);
 
-    // Query for chart area elements again
-    omegaChartArea = getChartArea('tmp/metric-omega');
-    alphaChartArea = getChartArea('metric-alpha');
-
-    const omegaHandle = within(omegaChartArea).getByTestId('experiment-view-compare-runs-card-drag-handle');
-
-    // Drag "omega" chart into the "alpha" chart position
-    act(() => {
-      fireEvent.dragStart(omegaHandle);
-      fireEvent.dragEnter(alphaChartArea);
-      fireEvent.drop(alphaChartArea);
-    });
+    const betaChartEntry = currentUIState.compareRunCharts?.find(({ uuid }) => uuid === 'metric-beta');
+    const omegaChartEntry = currentUIState.compareRunCharts?.find(({ uuid }) => uuid === 'metric-omega');
 
     await waitFor(() => {
-      expect(currentUIState.compareRunCharts?.map(({ uuid }) => uuid)).toEqual([
-        'chart-parallel',
-        'chart-omega',
-        'chart-alpha',
-        'chart-gamma',
-        'chart-beta',
-      ]);
+      expect(betaChartEntry?.metricSectionId).toBe(omegaChartEntry?.metricSectionId);
     });
-
-    expect(currentUIState.compareRunCharts?.map(({ metricSectionId }) => metricSectionId)).toEqual([
-      'metric-section-1',
-      'metric-section-1',
-      'metric-section-1',
-      'metric-section-1',
-      'metric-section-0',
-    ]);
   });
 
   test('initializes correct chart types for given initial runs data', async () => {
@@ -866,102 +746,6 @@ describe('RunsCompare', () => {
     });
   });
 
-  test('detecting new run and inserting new chart when section is reordered by dnd within', async () => {
-    currentUIState.compareRunCharts = undefined;
-    currentUIState.compareRunSections = undefined;
-
-    createComponentMock({
-      comparedRuns: [
-        { runUuid: 'run_1', runName: 'First run', runInfo: { runUuid: 'run_1' } },
-        { runUuid: 'run_2', runName: 'Second run', runInfo: { runUuid: 'run_2' } },
-      ] as any,
-      latestMetricsByRunUuid: {
-        run_1: {
-          'section1/metric3': { key: 'section1/metric3', value: 1 },
-          'section1/metric7': { key: 'section1/metric7', value: 1 },
-          'section1/metric5': { key: 'section1/metric5', value: 1 },
-        },
-        run_2: {
-          'section2/metric6': { key: 'section1/metric6', value: 1 },
-        },
-      } as any,
-    });
-
-    await waitFor(() => {
-      // Should be sorted when initialized
-      expect(currentUIState.compareRunCharts).toEqual([
-        expect.objectContaining({
-          metricKey: 'section1/metric3',
-        }),
-        expect.objectContaining({
-          metricKey: 'section1/metric5',
-        }),
-        expect.objectContaining({
-          metricKey: 'section1/metric7',
-        }),
-        expect.objectContaining({
-          metricKey: 'section2/metric6',
-        }),
-      ]);
-    });
-
-    const chartArea3 = getChartArea('section1/metric3');
-    const chartArea5 = getChartArea('section1/metric5');
-
-    // Get section1/metric3 handle
-    const chartArea3Handle = within(chartArea3).getByTestId('experiment-view-compare-runs-card-drag-handle');
-
-    // Drag "section1/metric3" chart into the "section1/metric5" chart position
-    act(() => {
-      fireEvent.dragStart(chartArea3Handle);
-      fireEvent.dragEnter(chartArea5);
-      fireEvent.drop(chartArea5);
-    });
-
-    cleanup();
-    // Adding a new run with section1/metric6 should append the metric at the end
-    createComponentMock({
-      comparedRuns: [
-        { runUuid: 'run_1', runName: 'First run', runInfo: { runUuid: 'run_1' } },
-        { runUuid: 'run_2', runName: 'Second run', runInfo: { runUuid: 'run_2' } },
-        { runUuid: 'run_3', runName: 'Third run', runInfo: { runUuid: 'run_3' } },
-      ] as any,
-      latestMetricsByRunUuid: {
-        run_1: {
-          'section1/metric3': { key: 'section1/metric3', value: 1 },
-          'section1/metric7': { key: 'section1/metric7', value: 1 },
-          'section1/metric5': { key: 'section1/metric5', value: 1 },
-        },
-        run_2: {
-          'section2/metric6': { key: 'section1/metric6', value: 1 },
-        },
-        run_3: {
-          'section1/metric6': { key: 'section1/metric6', value: 1 },
-        },
-      } as any,
-    });
-
-    await waitFor(() => {
-      expect(currentUIState.compareRunCharts).toEqual([
-        expect.objectContaining({
-          metricKey: 'section1/metric5',
-        }),
-        expect.objectContaining({
-          metricKey: 'section1/metric3',
-        }),
-        expect.objectContaining({
-          metricKey: 'section1/metric7',
-        }),
-        expect.objectContaining({
-          metricKey: 'section2/metric6',
-        }),
-        expect.objectContaining({
-          metricKey: 'section1/metric6',
-        }),
-      ]);
-    });
-  });
-
   test('detecting new run and inserting new chart when section is reordered by dragging chart out', async () => {
     currentUIState.compareRunCharts = undefined;
     currentUIState.compareRunSections = undefined;
@@ -992,15 +776,18 @@ describe('RunsCompare', () => {
     const chartArea5 = getChartArea('section1/metric5');
     const chartArea6 = getChartArea('section2/metric6');
 
+    // Find all sections (draggable sub-grids)
+    const allSections = screen.getAllByTestId('draggable-chart-cards-grid');
+    // Locate "section2/" section and "metric-5" chart element
+    const section2Area = allSections.find((grid) => grid.textContent?.includes('section2/metric6')) as HTMLElement;
+
     // Get section1/metric5 handle
     const chartArea5Handle = within(chartArea5).getByTestId('experiment-view-compare-runs-card-drag-handle');
 
     // Drag section1/metric5 chart into section2/metric6 chart position
-    act(() => {
-      fireEvent.dragStart(chartArea5Handle);
-      fireEvent.dragEnter(chartArea6);
-      fireEvent.drop(chartArea6);
-    });
+    fireEvent.mouseDown(chartArea5Handle);
+    fireEvent.mouseMove(section2Area);
+    fireEvent.mouseUp(chartArea5Handle);
 
     cleanup();
 
@@ -1077,15 +864,18 @@ describe('RunsCompare', () => {
     const chartArea6 = getChartArea('section2/metric6');
     const chartArea5 = getChartArea('section1/metric5');
 
+    // Find all sections (draggable sub-grids)
+    const allSections = screen.getAllByTestId('draggable-chart-cards-grid');
+    // Locate "section1/" section and "metric-6" chart element
+    const section1Area = allSections.find((grid) => grid.textContent?.includes('section1/metric5')) as HTMLElement;
+
     // Get section2/metric6 handle
     const chartArea6Handle = within(chartArea6).getByTestId('experiment-view-compare-runs-card-drag-handle');
 
     // Drag "section2/metric6" chart into the "section1/metric5" chart position
-    act(() => {
-      fireEvent.dragStart(chartArea6Handle);
-      fireEvent.dragEnter(chartArea5);
-      fireEvent.drop(chartArea5);
-    });
+    fireEvent.mouseDown(chartArea6Handle);
+    fireEvent.mouseMove(section1Area);
+    fireEvent.mouseUp(chartArea6Handle);
 
     cleanup();
 
@@ -1114,10 +904,10 @@ describe('RunsCompare', () => {
     await waitFor(() => {
       expect(currentUIState.compareRunCharts).toEqual([
         expect.objectContaining({
-          metricKey: 'section1/metric3',
+          metricKey: 'section2/metric6',
         }),
         expect.objectContaining({
-          metricKey: 'section2/metric6',
+          metricKey: 'section1/metric3',
         }),
         expect.objectContaining({
           metricKey: 'section1/metric5',

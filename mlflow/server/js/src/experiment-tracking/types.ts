@@ -345,7 +345,9 @@ export type RunLoggedArtifactsDeclaration = {
   type: RunLoggedArtifactType;
 }[];
 
-export type ExperimentViewRunsCompareMode = 'TABLE' | 'ARTIFACT' | 'CHART' | 'TRACES' | 'MODELS';
+// "MODELS" and "EVAL_RESULTS" are the not real legacy view modes, they are used to navigate to the
+// corresponding tabs on the experiment page.
+export type ExperimentViewRunsCompareMode = 'TABLE' | 'ARTIFACT' | 'CHART' | 'TRACES' | 'MODELS' | 'EVAL_RESULTS';
 
 /**
  * Describes a section of the compare runs view

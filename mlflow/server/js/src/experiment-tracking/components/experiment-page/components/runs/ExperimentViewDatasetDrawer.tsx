@@ -13,7 +13,6 @@ import {
 } from '@databricks/design-system';
 import type { RunDatasetWithTags } from '../../../../types';
 import { MLFLOW_RUN_DATASET_CONTEXT_TAG } from '../../../../constants';
-import { Divider } from 'antd';
 import { ExperimentViewDatasetSchema } from './ExperimentViewDatasetSchema';
 import { ExperimentViewDatasetLink } from './ExperimentViewDatasetLink';
 import { Link } from '../../../../../common/utils/RoutingUtils';
@@ -245,7 +244,14 @@ export const ExperimentViewDatasetDrawerImpl = ({
               <ExperimentViewDatasetSourceURL datasetWithTags={datasetWithTags} />
             </div>
             {/* dataset schema */}
-            <Divider css={{ marginTop: theme.spacing.sm, marginBottom: theme.spacing.xs }} />
+            <div
+              css={{
+                marginTop: theme.spacing.sm,
+                marginBottom: theme.spacing.xs,
+                borderTop: `1px solid ${theme.colors.border}`,
+                opacity: 0.5,
+              }}
+            />
             <ExperimentViewDatasetSchema datasetWithTags={datasetWithTags} />
           </div>
         </div>

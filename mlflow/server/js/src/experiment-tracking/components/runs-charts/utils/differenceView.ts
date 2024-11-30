@@ -148,7 +148,7 @@ export const getDifferenceViewDataGroups = (
     let hasDifference = false;
     previewData.forEach((runData, index) => {
       if (attribute === DifferenceCardAttributes.USER) {
-        const user = Utils.getUser(runData.runInfo, runData.tags);
+        const user = Utils.getUser(runData.runInfo ?? {}, runData.tags);
         attributeData[runData.uuid] = user;
       } else if (attribute === DifferenceCardAttributes.SOURCE) {
         const source = Utils.getSourceName(runData.tags);

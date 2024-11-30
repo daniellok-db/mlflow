@@ -864,7 +864,7 @@ export const RunsChartsConfigureLineChart = ({
           min={0}
           max={100}
           onChange={updateSmoothing}
-          defaultValue={state.lineSmoothness ? state.lineSmoothness : 0}
+          value={state.lineSmoothness ? state.lineSmoothness : 0}
           disabled={shouldEnableGlobalLineChartConfig() && state.useGlobalLineSmoothing}
         />
       </RunsChartsConfigureField>
