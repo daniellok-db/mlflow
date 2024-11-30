@@ -23,6 +23,10 @@
     "defaultMessage": "Time created",
     "description": "Label for the start time select dropdown for experiment runs view"
   },
+  "+gqcru": {
+    "defaultMessage": "System",
+    "description": "Display text for the 'system' role in a GenAI chat message."
+  },
   "+hQ+de": {
     "defaultMessage": "Run name",
     "description": "Label for Y axis in bar chart when comparing metrics between runs"
@@ -62,6 +66,10 @@
   "/QYbzP": {
     "defaultMessage": "Time (wall)",
     "description": "Experiment page > view controls > global settings for line chart view > settings for x-axis > label for setting to use wall time axis in all charts"
+  },
+  "/TX1Az": {
+    "defaultMessage": "Inputs",
+    "description": "Model trace explorer > selected span > inputs header"
   },
   "/g45Xz": {
     "defaultMessage": "Share and manage machine learning models.",
@@ -247,10 +255,6 @@
     "defaultMessage": "Add new tag",
     "description": "Experiment tracking > experiment page > runs > add new tag button"
   },
-  "31EKoz": {
-    "defaultMessage": "No model metrics recorded",
-    "description": "Run page > Charts tab > Model charts section > empty label"
-  },
   "36g3aR": {
     "defaultMessage": "Edit",
     "description": "Text for the edit button next to the description section title on\n             the model view page"
@@ -315,6 +319,10 @@
     "defaultMessage": "Add",
     "description": "Add button text in editable tags table view in MLflow"
   },
+  "4pXg9j": {
+    "defaultMessage": "No results found. Try using a different search term.",
+    "description": "Model trace explorer > no results found"
+  },
   "4qVc2+": {
     "defaultMessage": "Tags",
     "description": "Experiment page > traces table > tags column header"
@@ -362,6 +370,10 @@
   "5ZAXeS": {
     "defaultMessage": "{timeSince, plural, =1 {1 month} other {# months}} ago",
     "description": "Text for time in months since given date for MLflow views"
+  },
+  "5ZUAC2": {
+    "defaultMessage": "Function",
+    "description": "Display text for the 'function' role in a GenAI chat message."
   },
   "5aZ7nE": {
     "defaultMessage": "Artifact location copied",
@@ -422,6 +434,10 @@
   "6d5JTO": {
     "defaultMessage": "No traces recorded",
     "description": "Message displayed when there are no traces logged to the experiment"
+  },
+  "6fP+8o": {
+    "defaultMessage": "See more",
+    "description": "A button label in a message renderer that expands truncated content when clicked."
   },
   "6kSKRk": {
     "defaultMessage": "Comparing {numVersions} Versions",
@@ -679,6 +695,10 @@
     "defaultMessage": "Max. no of runs shown",
     "description": "Label for the control allowing selection of number of runs displayed in a compare runs chart"
   },
+  "AgjhWE": {
+    "defaultMessage": "See less",
+    "description": "Model trace explorer > selected span > code snippet > see less button"
+  },
   "Aqq08o": {
     "defaultMessage": "HTTP",
     "description": "Experiment dataset drawer > source type > HTTP source type label"
@@ -702,6 +722,10 @@
   "AyceYA": {
     "defaultMessage": "Served LLM model",
     "description": "Experiment page > new run modal > served LLM model endpoint label"
+  },
+  "B5K1Ix": {
+    "defaultMessage": "No attributes found",
+    "description": "Empty state for the attributes tab in the model trace explorer. Attributes are properties of a span that the user defines."
   },
   "B80MC6": {
     "defaultMessage": "Contour Plot",
@@ -847,10 +871,6 @@
     "defaultMessage": "Using regular expression quick filter. The following query will be used: {filterSample}",
     "description": "Experiment page > control bar > search filter > a label displayed when user has entered a simple query that will be automatically transformed into RLIKE SQL query before being sent to the API"
   },
-  "Eh/e0j": {
-    "defaultMessage": "Move up",
-    "description": "Run page > Charts tab > Chart box header > Move up dropdown option"
-  },
   "EkUD0b": {
     "defaultMessage": "No results",
     "description": "Experiment page > sort selector > no results after filtering by search query"
@@ -971,9 +991,21 @@
     "defaultMessage": "Are you sure you want to delete {modelName}? This cannot be undone.",
     "description": "Confirmation message for delete model modal on model view page"
   },
+  "HV1iaK": {
+    "defaultMessage": "Monitoring",
+    "description": "A button enabling evaluation results monitoring mode on the experiment page"
+  },
+  "HYQHVk": {
+    "defaultMessage": "See more",
+    "description": "Model trace explorer > selected span > code snippet > see more button"
+  },
   "Hk0RSH": {
     "defaultMessage": "Y-axis:",
     "description": "Label text for Y-axis in box plot comparison in MLflow"
+  },
+  "Hvznjh": {
+    "defaultMessage": "Assistant",
+    "description": "Display text for the 'assistant' role in a GenAI chat message."
   },
   "HyBP+D": {
     "defaultMessage": "Tags",
@@ -1111,6 +1143,14 @@
     "defaultMessage": "Chart",
     "description": "A button enabling compare runs (chart) mode on the experiment page"
   },
+  "KW2dOC": {
+    "defaultMessage": "Inputs / Outputs",
+    "description": "Label for the inputs and outputs tab of the model trace explorer."
+  },
+  "KYMoeQ": {
+    "defaultMessage": "Show timeline",
+    "description": "Model trace explorer > show timeline. This button shows the Gantt timeline view in the UI."
+  },
   "Ka1jM2": {
     "defaultMessage": "Disabled",
     "description": "Runs charts > line chart > ignore outliers > disabled label"
@@ -1214,6 +1254,10 @@
   "NJ1bYP": {
     "defaultMessage": "{fieldName} are identical",
     "description": "Default text in data table where items are identical in the model comparison page"
+  },
+  "NMxAot": {
+    "defaultMessage": "Raw input",
+    "description": "Tooltip content for a button that changes the render mode of the data to raw input (JSON)"
   },
   "NN0ScV": {
     "defaultMessage": "Comparing {numRuns} Runs from 1 Experiment",
@@ -1451,10 +1495,6 @@
     "defaultMessage": "Save",
     "description": "Default text for save button on editable notes in MLflow"
   },
-  "Sp+Iw0": {
-    "defaultMessage": "Move down",
-    "description": "Run page > Charts tab > Chart box header > Move down dropdown option"
-  },
   "SrXYrV": {
     "defaultMessage": "Previewing the first {numRows} rows",
     "description": "Title for showing the number of rows in the parsed data preview"
@@ -1495,6 +1535,10 @@
     "defaultMessage": "Hide group",
     "description": "A tooltip for the visibility icon button in the runs table next to the visible run group"
   },
+  "ThYYz6": {
+    "defaultMessage": "Documents",
+    "description": "Model trace explorer > retriever span > documents header"
+  },
   "ThrXMh": {
     "defaultMessage": "Inputs",
     "description": "Table section name for schema inputs in the model comparison page"
@@ -1518,10 +1562,6 @@
   "U3btBc": {
     "defaultMessage": "Examples:",
     "description": "Text header for examples of mlflow search syntax"
-  },
-  "U7eJfk": {
-    "defaultMessage": "Error while fetching chart data",
-    "description": "Run page > Charts tab > Metric chart box > fetch error"
   },
   "U82iv6": {
     "defaultMessage": "Registered Models",
@@ -1779,6 +1819,10 @@
     "defaultMessage": "New run name",
     "description": "Experiment page > new run modal > run name input label"
   },
+  "ZstVNI": {
+    "defaultMessage": "Outputs",
+    "description": "Model trace explorer > selected span > outputs header"
+  },
   "ZvJTXB": {
     "defaultMessage": "No tables selected",
     "description": "Experiment page > artifact compare view > empty state for no tables selected > title"
@@ -1975,9 +2019,9 @@
     "defaultMessage": "You need to provide a prompt template",
     "description": "Experiment page > new run modal > invalid state - no prompt template provided"
   },
-  "dQY7H0": {
-    "defaultMessage": "No system metrics recorded",
-    "description": "Run page > Charts tab > System charts section > empty label"
+  "dPn3az": {
+    "defaultMessage": "Tool",
+    "description": "Display text for the 'tool' role in a GenAI chat message."
   },
   "dTLq6E": {
     "defaultMessage": "expand {title}",
@@ -1986,10 +2030,6 @@
   "dYbJha": {
     "defaultMessage": "Please provide run name",
     "description": "Experiment page > new run modal > invalid state - no run name provided"
-  },
-  "db+oaM": {
-    "defaultMessage": "Unable to parse JSON file",
-    "description": "Run page > artifact view > logged table view > unable to parse JSON file error"
   },
   "ddAFCW": {
     "defaultMessage": "500: Internal server error",
@@ -2155,10 +2195,6 @@
     "defaultMessage": "Give instructions to the model. Use '{{ }}' or the \"Add new variable\" button to add variables to your prompt.",
     "description": "Experiment page > new run modal > prompt template input hint"
   },
-  "gDNspC": {
-    "defaultMessage": "Refresh",
-    "description": "Run page > Charts tab > Refresh all charts button label"
-  },
   "gIc8Lp": {
     "defaultMessage": "Stages have been deprecated in the new Model Registry UI. Learn how to migrate models <link>here</link>.",
     "description": "Tooltip content for the disabled stage metadata in model version page"
@@ -2170,6 +2206,10 @@
   "gRz1nB": {
     "defaultMessage": "{count, plural, one {Delete Trace} other {Delete Traces}}",
     "description": "Experiment page > traces view controls > Delete traces modal > Title"
+  },
+  "gTEFCD": {
+    "defaultMessage": "See less",
+    "description": "A button label in a message renderer that truncates long content when clicked."
   },
   "gUdmaJ": {
     "defaultMessage": "Schema",
@@ -2323,6 +2363,10 @@
     "defaultMessage": "All runs are hidden. Select at least one run to view charts.",
     "description": "Experiment tracking > runs charts > indication displayed when no runs are selected for comparison"
   },
+  "jb5ssj": {
+    "defaultMessage": "Hide timeline",
+    "description": "Model trace explorer > hide timeline. This button hides the Gantt timeline view in the UI."
+  },
   "jkeYf8": {
     "defaultMessage": "Unpin group",
     "description": "A tooltip for the pin icon button in the runs table next to the pinned run group"
@@ -2458,6 +2502,10 @@
   "mpHsCg": {
     "defaultMessage": "Size:",
     "description": "Label to display the size of the artifact of the experiment"
+  },
+  "mqDCNl": {
+    "defaultMessage": "Unable to parse JSON file. The file should contain an object with 'columns' and 'data' keys.",
+    "description": "An error message displayed when the logged table JSON file is malformed or does not contain 'columns' and 'data' keys"
   },
   "mqTFL+": {
     "defaultMessage": "Cancel",
@@ -2795,6 +2843,10 @@
     "defaultMessage": "Table",
     "description": "Experiment page > artifact compare view > table select dropdown label"
   },
+  "t+aG6y": {
+    "defaultMessage": "User",
+    "description": "Display text for the 'user' role in a GenAI chat message."
+  },
   "t0Qkuc": {
     "defaultMessage": "Value",
     "description": "Run page > Overview > Metrics table > Value column header"
@@ -2975,9 +3027,17 @@
     "defaultMessage": "Unhide run",
     "description": "A tooltip for the visibility icon button in the runs table next to the hidden run"
   },
+  "xnr5KT": {
+    "defaultMessage": "No events found",
+    "description": "Empty state for the events tab in the model trace explorer. Events are logs of arbitrary things (e.g. exceptions) that occur during the execution of a span, and can be user-defined."
+  },
   "xr/C5c": {
     "defaultMessage": "Comparing first {count} groups and runs",
     "description": "Experiment page > compare runs > chart header > compared groups and runs count label"
+  },
+  "xwe7WH": {
+    "defaultMessage": "Default rendering",
+    "description": "Tooltip content for a button that changes the render mode to default"
   },
   "y56Vz9": {
     "defaultMessage": "In progress",
@@ -3062,10 +3122,6 @@
   "zMhOr3": {
     "defaultMessage": "Cancel",
     "description": "Cancel button text for model version deletion modal in model versions view page"
-  },
-  "zMmWhy": {
-    "defaultMessage": "Chart data is refreshing",
-    "description": "Run page > Charts tab > Chart box header > Refreshing chart accessible label"
   },
   "zWGmon": {
     "defaultMessage": "Positive infinity ({metricKey})",

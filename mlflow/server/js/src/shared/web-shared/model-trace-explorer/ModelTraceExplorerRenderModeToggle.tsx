@@ -43,7 +43,7 @@ export function ModelTraceExplorerRenderModeToggle({
           </div>
         </Tooltip>
       </SegmentedControlButton>
-      <SegmentedControlButton data-testid="model-trace-explorer-render-default-button" value={true}>
+      <SegmentedControlButton data-testid="model-trace-explorer-render-default-button" value>
         <Tooltip
           componentId="shared.model-trace-explorer.default-rendering-tooltip"
           content={

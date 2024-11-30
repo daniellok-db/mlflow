@@ -141,7 +141,7 @@ export const ModelTraceExplorerFrameRenderer = ({
           <Typography.Link
             componentId="mlflow.notebook.trace-ui-learn-more-link"
             href="https://mlflow.org/docs/latest/llms/tracing/index.html"
-            openInNewTab={true}
+            openInNewTab
             title="Learn More"
           >
             Learn More
