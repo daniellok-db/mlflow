@@ -6,6 +6,7 @@
     "build": "craco --max_old_space_size=8192 build",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
+    "build-notebook-renderer": "craco build notebookRenderer",
     "test": "craco --max_old_space_size=8192 test --env=jsdom --colors --watchAll=false",
     "test:watch": "yarn test --watch",
     "test:ci": "CI=true craco test --env=jsdom --colors --forceExit --ci --coverage",
