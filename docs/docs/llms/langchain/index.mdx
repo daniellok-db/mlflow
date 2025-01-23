@@ -5,7 +5,7 @@ import { APILink } from "@site/src/components/APILink";
 
 # MLflow LangChain Flavor
 
-:::attention
+:::info
 The `langchain` flavor is under active development and is marked as Experimental. Public APIs are 
 subject to change, and new features may be added as the flavor evolves.
 :::
@@ -66,7 +66,7 @@ There is a known deserialization issue when logging chains or agents dependent u
 To avoid this issue, we strongly recommend using the [Model-from-Code](#logging-models-from-code) method for logging such models. This method allows you to bypass the model serialization and robustly save the model definition.
 :::
 
-:::attention
+:::info
 Logging chains/agents that include [ChatOpenAI](https://python.langchain.com/docs/integrations/chat/openai) and [AzureChatOpenAI](https://python.langchain.com/docs/integrations/chat/azure_chat_openai) requires `MLflow>=2.12.0` and `LangChain>=0.0.307`.
 :::
 
