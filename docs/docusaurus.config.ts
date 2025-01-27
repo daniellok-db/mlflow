@@ -82,6 +82,11 @@ const config: Config = {
           label: "Docs",
         },
         {
+          href: "https://mlflow.org/docs/latest/api_reference/",
+          position: "left",
+          label: "API Reference",
+        },
+        {
           href: "https://github.com/mlflow/mlflow",
           label: "GitHub",
           position: "right",
