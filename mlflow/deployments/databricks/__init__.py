@@ -1,6 +1,7 @@
 import json
 import posixpath
 import warnings
+import logging
 from typing import Any, Iterator, Optional
 
 from mlflow.deployments import BaseDeploymentClient
@@ -17,6 +18,7 @@ from mlflow.utils.annotations import deprecated, experimental
 from mlflow.utils.databricks_utils import get_databricks_host_creds
 from mlflow.utils.rest_utils import augmented_raise_for_status, http_request
 
+logger = logging.getLogger(__name__)
 
 class DatabricksEndpoint(AttrDict):
     """
@@ -133,6 +135,8 @@ class DatabricksDeploymentClient(BaseDeploymentClient):
             call_kwargs["params"] = json_body
         else:
             call_kwargs["json"] = json_body
+        
+        logger.info(f"Calling {method} {posixpath.join(prefix, 'serving-endpoints', route or '')} with {call_kwargs}")
 
         response = http_request(
             host_creds=get_databricks_host_creds(self.target_uri),

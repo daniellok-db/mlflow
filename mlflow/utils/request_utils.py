@@ -4,6 +4,7 @@
 import os
 import random
 from functools import lru_cache
+import logging
 
 import requests
 import urllib3
@@ -11,6 +12,8 @@ from packaging.version import Version
 from requests.adapters import HTTPAdapter
 from requests.exceptions import HTTPError
 from urllib3.util import Retry
+
+logger = logging.getLogger(__name__)
 
 # Response codes that generally indicate transient network failures and merit client retries,
 # based on guidance from cloud service providers
@@ -127,6 +130,7 @@ def _cached_get_request_session(
         "raise_on_status": raise_on_status,
         "respect_retry_after_header": respect_retry_after_header,
     }
+    logger.info(f"In _cached_get_request_session, Retry kwargs: {retry_kwargs}")
     urllib3_version = Version(urllib3.__version__)
     if urllib3_version >= Version("1.26.0"):
         retry_kwargs["allowed_methods"] = None
@@ -147,6 +151,7 @@ def _cached_get_request_session(
         pool_maxsize=MLFLOW_HTTP_POOL_MAXSIZE.get(),
         max_retries=retry,
     )
+    logger.info(f"In _cached_get_request_session, adapter: {adapter}, retry: {retry}")
     session = requests.Session()
     session.mount("https://", adapter)
     session.mount("http://", adapter)

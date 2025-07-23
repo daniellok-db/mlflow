@@ -110,7 +110,10 @@ def http_request(
         MLFLOW_HTTP_REQUEST_BACKOFF_JITTER.get() if backoff_jitter is None else backoff_jitter
     )
 
+    _logger.info(f"Max retries: {max_retries}, backoff_factor: {backoff_factor}, backoff_jitter: {backoff_jitter}")
+
     if host_creds.use_databricks_sdk:
+        _logger.info("Using Databricks SDK")
         from databricks.sdk.errors import DatabricksError
 
         ws_client = get_workspace_client(
@@ -123,6 +126,7 @@ def http_request(
         )
 
         def make_sdk_call():
+            _logger.info(f"Making SDK call to {endpoint} with {kwargs}")
             # Databricks SDK `APIClient.do` API is for making request using
             # HTTP
             # https://github.com/databricks/databricks-sdk-py/blob/a714146d9c155dd1e3567475be78623f72028ee0/databricks/sdk/core.py#L134
@@ -182,6 +186,7 @@ def http_request(
             ).encode("UTF-8")
             return response
 
+    _logger.info(f"Using requests")
     _validate_max_retries(max_retries)
     _validate_backoff_factor(backoff_factor)
     respect_retry_after_header = (
@@ -227,6 +232,7 @@ def http_request(
         kwargs["auth"] = fetch_auth(host_creds.auth)
 
     try:
+        _logger.info(f"Getting http response with retries for {method} {url} with {kwargs}")
         return _get_http_response_with_retries(
             method,
             url,
