@@ -1,0 +1,144 @@
+name: Release MLflow Java Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version (e.g., 2.10.0)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run (package only, do not deploy)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  release-java:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: Validate versions consistency
+      run: |
+        cd mlflow/java
+        
+        # Extract versions from all pom.xml files
+        versions=()
+        for rel_path in "." "client" "spark_2.12" "spark_2.13"; do
+          if [ -f "$rel_path/pom.xml" ]; then
+            version=$(grep -m1 '<version>' "$rel_path/pom.xml" | sed 's/.*<version>\(.*\)<\/version>.*/\1/')
+            echo "Found version $version in $rel_path/pom.xml"
+            versions+=("$version")
+          fi
+        done
+        
+        # Check all versions are the same
+        first_version=${versions[0]}
+        for v in "${versions[@]}"; do
+          if [ "$v" != "$first_version" ]; then
+            echo "Error: All Java packages must have the same version"
+            exit 1
+          fi
+        done
+        
+        echo "All packages have consistent version: $first_version"
+        echo "JAVA_VERSION=$first_version" >> $GITHUB_ENV
+
+    - name: Validate release branch
+      if: ${{ !inputs.dry_run }}
+      run: |
+        current_branch=$(git branch --show-current)
+        expected_branch="release/${{ inputs.release_version }}"
+        
+        if [[ "$JAVA_VERSION" != *"-SNAPSHOT" ]]; then
+          if [ "$current_branch" != "$expected_branch" ]; then
+            echo "Error: For non-SNAPSHOT releases, must be on branch $expected_branch, but on $current_branch"
+            exit 1
+          fi
+          if [ "${{ inputs.release_version }}" != "$JAVA_VERSION" ]; then
+            echo "Error: Release version ${{ inputs.release_version }} doesn't match package version $JAVA_VERSION"
+            exit 1
+          fi
+        fi
+
+    - name: Create Maven settings
+      run: |
+        mkdir -p ~/.m2
+        cat > ~/.m2/settings.xml << 'EOF'
+        <settings
+          xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              https://maven.apache.org/xsd/settings-1.0.0.xsd">
+          <servers>
+            <server>
+              <id>central</id>
+              <username>${{ secrets.SONATYPE_USERNAME }}</username>
+              <password>${{ secrets.SONATYPE_PASSWORD }}</password>
+            </server>
+            <server>
+              <id>${{ secrets.GPG_KEY_NAME }}</id>
+              <passphrase>${{ secrets.GPG_KEY_PHRASE }}</passphrase>
+            </server>
+          </servers>
+          <profiles>
+            <profile>
+              <activation>
+                <activeByDefault>true</activeByDefault>
+              </activation>
+              <properties>
+                <gpg.keyname>${{ secrets.GPG_KEY_NAME }}</gpg.keyname>
+              </properties>
+            </profile>
+          </profiles>
+          <mirrors>
+              <mirror>
+                  <id>google-maven-mirror</id>
+                  <name>Google maven mirror repo URL</name>
+                  <url>https://maven-central.storage-download.googleapis.com/maven2</url>
+                  <mirrorOf>google-maven-central</mirrorOf>
+              </mirror>
+          </mirrors>
+        </settings>
+        EOF
+
+    - name: Import GPG key
+      run: |
+        echo "${{ secrets.GPG_KEY_FILE }}" | base64 -d > /tmp/gpg-key
+        gpg --batch --import /tmp/gpg-key
+        echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
+        gpgconf --reload gpg-agent
+
+    - name: Build and deploy Java packages
+      run: |
+        cd mlflow/java
+        
+        if [ "${{ inputs.dry_run }}" = "true" ]; then
+          echo "Dry run: Building packages only"
+          mvn -DskipTests -Pdo-sign --batch-mode --no-transfer-progress clean package
+        else
+          echo "Deploying packages to Maven Central"
+          mvn -DskipTests -Pdo-sign --batch-mode --no-transfer-progress clean deploy
+        fi
+
+    - name: Upload artifacts (dry run only)
+      if: ${{ inputs.dry_run }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: mlflow-java-packages-${{ inputs.release_version }}
+        path: |
+          mlflow/java/client/target/*.jar
+          mlflow/java/spark_2.12/target/*.jar
+          mlflow/java/spark_2.13/target/*.jar
+        retention-days: 30
