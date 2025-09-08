@@ -111,37 +111,7 @@ export const ExperimentViewRunsTable = React.memo(
     const isComparingRuns = compareRunsMode !== 'TABLE';
 
     // Performance optimization: Only extract the keys we actually need based on selectedColumns
-    const { paramKeyList, metricKeyList, tagsList } = useMemo(() => {
-      // If we're comparing runs, we don't need to filter the keys
-      if (isComparingRuns) {
-        return runsData;
-      }
-
-      // Filter metric keys based on selected columns
-      const filteredMetricKeys = runsData.metricKeyList.filter((key) =>
-        selectedColumns.includes(makeCanonicalSortKey(COLUMN_TYPES.METRICS, key)),
-      );
-
-      // Filter param keys based on selected columns
-      const filteredParamKeys = runsData.paramKeyList.filter((key) =>
-        selectedColumns.includes(makeCanonicalSortKey(COLUMN_TYPES.PARAMS, key)),
-      );
-
-      // Filter tag keys based on selected columns
-      const filteredTags = runsData.tagsList.map((tags) =>
-        Object.fromEntries(
-          Object.entries(tags).filter(([key]) =>
-            selectedColumns.includes(makeCanonicalSortKey(COLUMN_TYPES.TAGS, key)),
-          ),
-        ),
-      );
-
-      return {
-        metricKeyList: filteredMetricKeys,
-        paramKeyList: filteredParamKeys,
-        tagsList: filteredTags,
-      };
-    }, [runsData, selectedColumns, isComparingRuns]);
+    const { paramKeyList, metricKeyList, tagsList } = runsData;
 
     const [gridApi, setGridApi] = useState<GridApi>();
     const [columnApi, setColumnApi] = useState<ColumnApi>();
