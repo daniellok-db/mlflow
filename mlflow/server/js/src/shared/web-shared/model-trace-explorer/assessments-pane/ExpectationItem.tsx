@@ -1,8 +1,6 @@
 import { useState } from 'react';
-
-import { Typography, useDesignSystemTheme } from '@databricks/design-system';
+import { Typography, useDesignSystemTheme, ChevronRightIcon, ChevronDownIcon } from '@databricks/design-system';
 import { FormattedMessage } from '@databricks/i18n';
-
 import { AssessmentActionsOverflowMenu } from './AssessmentActionsOverflowMenu';
 import { AssessmentDeleteModal } from './AssessmentDeleteModal';
 import { AssessmentEditForm } from './AssessmentEditForm';
@@ -11,11 +9,13 @@ import { ExpectationValuePreview } from './ExpectationValuePreview';
 import { SpanNameDetailViewLink } from './SpanNameDetailViewLink';
 import type { ExpectationAssessment } from '../ModelTrace.types';
 import { useModelTraceExplorerViewState } from '../ModelTraceExplorerViewStateContext';
+import { getSourceIcon } from './utils';
 
 export const ExpectationItem = ({ expectation }: { expectation: ExpectationAssessment }) => {
   const { theme } = useDesignSystemTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const { nodeMap, activeView } = useModelTraceExplorerViewState();
 
   const associatedSpan = expectation.span_id ? nodeMap[expectation.span_id] : null;
@@ -24,6 +24,7 @@ export const ExpectationItem = ({ expectation }: { expectation: ExpectationAsses
   const showAssociatedSpan = activeView === 'summary' && associatedSpan;
 
   const parsedValue = getParsedExpectationValue(expectation.expectation);
+  const SourceIcon = getSourceIcon(expectation.source);
 
   return (
     <div
@@ -59,7 +60,48 @@ export const ExpectationItem = ({ expectation }: { expectation: ExpectationAsses
           onCancel={() => setIsEditing(false)}
         />
       ) : (
-        <ExpectationValuePreview parsedValue={parsedValue} />
+        <div css={{ display: 'flex', flexDirection: 'column', gap: theme.spacing.xs }}>
+          <div css={{ display: 'flex', alignItems: 'center', gap: theme.spacing.xs }}>
+            <SourceIcon/> 
+              <Typography.Text size="sm" color="secondary">
+                {expectation.source.source_id}
+              </Typography.Text>
+            </div>
+          <div css={{ display: 'flex', alignItems: 'flex-start', gap: theme.spacing.xs }}>
+            <div
+              css={{ paddingTop: 2, flexShrink: 0, cursor: 'pointer' }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsExpanded(!isExpanded);
+              }}
+            >
+              {isExpanded ? (
+                <ChevronDownIcon css={{ fontSize: 16 }} />
+              ) : (
+                <ChevronRightIcon css={{ fontSize: 16 }} />
+              )}
+            </div>
+            <div css={{ flex: 1, minWidth: 0 }}>
+              {isExpanded ? (
+                <div
+                  css={{
+                    backgroundColor: theme.colors.backgroundSecondary,
+                    padding: theme.spacing.sm,
+                    borderRadius: theme.borders.borderRadiusMd,
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                  }}
+                >
+                  <Typography.Text>
+                    {typeof parsedValue === 'string' ? parsedValue : JSON.stringify(parsedValue, null, 2)}
+                  </Typography.Text>
+                </div>
+              ) : (
+                <ExpectationValuePreview parsedValue={parsedValue} singleLine />
+              )}
+            </div>
+          </div>
+        </div>
       )}
       {showAssociatedSpan && (
         <div css={{ display: 'flex', flexDirection: 'column', gap: theme.spacing.xs }}>
