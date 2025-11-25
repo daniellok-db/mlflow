@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Header, useDesignSystemTheme } from '@databricks/design-system';
+import { useState, lazy, Suspense } from 'react';
+import { Header, Spinner, useDesignSystemTheme } from '@databricks/design-system';
 import { FormattedMessage } from 'react-intl';
 import { ScrollablePageWrapper } from '../common/components/ScrollablePageWrapper';
 import { useQuery } from '@mlflow/mlflow/src/common/utils/reactQueryHooks';
@@ -7,11 +7,18 @@ import { MlflowService } from '../experiment-tracking/sdk/MlflowService';
 import type { SearchExperimentsApiResponse } from '../experiment-tracking/types';
 import { CreateExperimentModal } from '../experiment-tracking/components/modals/CreateExperimentModal';
 import { useInvalidateExperimentList } from '../experiment-tracking/components/experiment-page/hooks/useExperimentListQuery';
-import { GetStarted } from './components/GetStarted';
-import { ExperimentsHomeView } from './components/ExperimentsHomeView';
-import { DiscoverNews } from './components/DiscoverNews';
-import { LogTracesDrawer } from './components/LogTracesDrawer';
 import { HomePageViewStateProvider } from './HomePageViewStateContext';
+
+const GetStarted = lazy(() => import('./components/GetStarted').then(({ GetStarted }) => ({ default: GetStarted })));
+const ExperimentsHomeView = lazy(() =>
+  import('./components/ExperimentsHomeView').then(({ ExperimentsHomeView }) => ({ default: ExperimentsHomeView })),
+);
+const DiscoverNews = lazy(() =>
+  import('./components/DiscoverNews').then(({ DiscoverNews }) => ({ default: DiscoverNews })),
+);
+const LogTracesDrawer = lazy(() =>
+  import('./components/LogTracesDrawer').then(({ LogTracesDrawer }) => ({ default: LogTracesDrawer })),
+);
 
 type ExperimentQueryKey = ['home', 'recent-experiments'];
 
@@ -57,22 +64,30 @@ const HomePageContent = () => {
       }}
     >
       <Header title={<FormattedMessage defaultMessage="Welcome to MLflow" description="Home page hero title" />} />
-      <GetStarted />
-      <ExperimentsHomeView
-        experiments={experiments}
-        isLoading={isLoading}
-        error={error}
-        onCreateExperiment={handleOpenCreateModal}
-        onRetry={refetch}
-      />
-      <DiscoverNews />
+      <Suspense fallback={<Spinner />}>
+        <GetStarted />
+      </Suspense>
+      <Suspense fallback={<Spinner />}>
+        <ExperimentsHomeView
+          experiments={experiments}
+          isLoading={isLoading}
+          error={error}
+          onCreateExperiment={handleOpenCreateModal}
+          onRetry={refetch}
+        />
+      </Suspense>
+      <Suspense fallback={<Spinner />}>
+        <DiscoverNews />
+      </Suspense>
 
       <CreateExperimentModal
         isOpen={isCreateModalOpen}
         onClose={handleCloseCreateModal}
         onExperimentCreated={handleExperimentCreated}
       />
-      <LogTracesDrawer />
+      <Suspense fallback={<Spinner />}>
+        <LogTracesDrawer />
+      </Suspense>
     </ScrollablePageWrapper>
   );
 };

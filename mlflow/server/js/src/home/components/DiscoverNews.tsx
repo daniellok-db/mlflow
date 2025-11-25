@@ -130,3 +130,5 @@ export const DiscoverNews = () => {
     </section>
   );
 };
+
+export default DiscoverNews;

@@ -118,3 +118,5 @@ export const GetStarted = () => {
     </section>
   );
 };
+
+export default GetStarted;
