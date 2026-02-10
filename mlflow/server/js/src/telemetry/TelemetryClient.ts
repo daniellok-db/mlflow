@@ -113,6 +113,8 @@ class TelemetryClient {
       },
     };
 
+    console.log('Logging event:', payload, record);
+
     this.port?.postMessage({
       type: ClientToWorkerMessageType.LOG_EVENT,
       payload,

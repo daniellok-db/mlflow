@@ -53,6 +53,7 @@ import { getExperimentKindForWorkflowType } from '../../experiment-tracking/util
 import { MlflowSidebarExperimentItems } from './MlflowSidebarExperimentItems';
 import { MlflowSidebarLink } from './MlflowSidebarLink';
 import { MlflowSidebarGatewayItems } from './MlflowSidebarGatewayItems';
+import { MlflowSidebarWorkflowSwitch } from './MlflowSidebarWorkflowSwitch';
 
 const isInsideExperiment = (location: Location) =>
   Boolean(matchPath('/experiments/:experimentId/*', location.pathname));
@@ -285,63 +286,17 @@ export function MlflowSidebar() {
   return (
     <aside
       css={{
-        width: enableWorkflowBasedNavigation ? 230 : 200,
+        width: 200,
         flexShrink: 0,
         padding: theme.spacing.sm,
         display: 'inline-flex',
         flexDirection: 'column',
-        gap: theme.spacing.md,
+        gap: theme.spacing.sm,
       }}
     >
       {enableWorkflowBasedNavigation && (
-        <SegmentedControlGroup
-          value={workflowType}
-          onChange={(e) => {
-            if (e.target.value) {
-              setWorkflowType(e.target.value as WorkflowType);
-            }
-          }}
-          name="workflow-type-selector"
-          componentId="mlflow.sidebar.workflow_type_selector"
-          css={{ width: '100%', display: 'flex' }}
-        >
-          <SegmentedControlButton value={WorkflowType.GENAI}>
-            <FormattedMessage defaultMessage="GenAI" description="Label for GenAI workflow type option" />
-          </SegmentedControlButton>
-          <SegmentedControlButton value={WorkflowType.MACHINE_LEARNING} css={{ whiteSpace: 'nowrap' }}>
-            <FormattedMessage
-              defaultMessage="Machine Learning"
-              description="Label for Machine Learning workflow type option"
-            />
-          </SegmentedControlButton>
-        </SegmentedControlGroup>
+        <MlflowSidebarWorkflowSwitch workflowType={workflowType} setWorkflowType={setWorkflowType} />
       )}
-
-      <DropdownMenu.Root modal={false}>
-        <DropdownMenu.Trigger asChild>
-          <Button componentId="mlflow.sidebar.new_button" icon={<PlusIcon />}>
-            <FormattedMessage
-              defaultMessage="New"
-              description="Sidebar create popover button to create new experiment, model or prompt"
-            />
-          </Button>
-        </DropdownMenu.Trigger>
-
-        <DropdownMenu.Content side="right" sideOffset={theme.spacing.sm} align="start">
-          {menuItems
-            .filter((item) => item.dropdownProps !== undefined)
-            .map(({ key, icon, dropdownProps }) => (
-              <DropdownMenu.Item
-                key={key}
-                componentId={(dropdownProps?.componentId ?? `${key}-dropdown-item`) as string}
-                onClick={dropdownProps?.onClick}
-              >
-                <DropdownMenu.IconWrapper>{icon}</DropdownMenu.IconWrapper>
-                {dropdownProps?.children}
-              </DropdownMenu.Item>
-            ))}
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
 
       <nav css={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
         <ul
