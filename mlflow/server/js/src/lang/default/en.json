@@ -1602,6 +1602,10 @@
     "defaultMessage": "MLflow runs:",
     "description": "A label for the associated MLflow runs in the prompt details page"
   },
+  "9ZzOhu": {
+    "defaultMessage": "API Keys",
+    "description": "Sidebar link for gateway API keys"
+  },
   "9cTaBs": {
     "defaultMessage": "Fail",
     "description": "Failing assessment label"
@@ -2313,10 +2317,6 @@
   "EkUD0b": {
     "defaultMessage": "No results",
     "description": "Experiment page > sort selector > no results after filtering by search query"
-  },
-  "Emh131": {
-    "defaultMessage": "Select an experiment to view this tab",
-    "description": "Tooltip shown when nested experiment items are disabled because no experiment is selected"
   },
   "EpFST9": {
     "defaultMessage": "No trace data recorded",
@@ -4380,6 +4380,10 @@
     "defaultMessage": "Add chart",
     "description": "Confirm button label within a modal when adding a new runs comparison chart"
   },
+  "Uzii0L": {
+    "defaultMessage": "AI Gateway",
+    "description": "Sidebar link for gateway"
+  },
   "V0/LoE": {
     "defaultMessage": "This trace is not exportable because it either contains an error or the response is not a ChatCompletionResponse.",
     "description": "Tooltip message for the export button when the trace is not exportable"
@@ -4523,6 +4527,10 @@
   "VwxvII": {
     "defaultMessage": "forecasting",
     "description": "A short label for experiments focused on time series forecasting"
+  },
+  "W0PKNU": {
+    "defaultMessage": "Model registry",
+    "description": "Sidebar link for model registry tab"
   },
   "W1ZIP4": {
     "defaultMessage": "Safety",
@@ -4774,10 +4782,6 @@
   "Xs1oJm": {
     "defaultMessage": "Search metric charts",
     "description": "Run page > Charts tab > Filter metric charts input > placeholder"
-  },
-  "Xuz/xh": {
-    "defaultMessage": "Models",
-    "description": "Sidebar link for models tab"
   },
   "XuzIWs": {
     "defaultMessage": "Some traces are hidden by your time range filter: \"{filterLabel}\"",
@@ -5234,10 +5238,6 @@
   "akmaST": {
     "defaultMessage": "Irrelevant",
     "description": "Evaluation results > retrieval relevancy assessment > negative value label. Displayed if evaluation result is considered as irrelevant to the query."
-  },
-  "amFk5F": {
-    "defaultMessage": "Workflow type",
-    "description": "Label for the workflow type selector in the sidebar"
   },
   "aqMseN": {
     "defaultMessage": "Manage prompt updates and collaborate across teams.",
@@ -7458,6 +7458,10 @@
   "qcYoo4": {
     "defaultMessage": "Please select sessions to run the judge",
     "description": "Tooltip message when no sessions are selected"
+  },
+  "qhOwHa": {
+    "defaultMessage": "Endpoints",
+    "description": "Sidebar link for gateway endpoints"
   },
   "qkRBUr": {
     "defaultMessage": "Line smoothing",
