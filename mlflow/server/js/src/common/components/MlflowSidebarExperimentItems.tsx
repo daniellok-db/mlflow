@@ -43,8 +43,7 @@ export const MlflowSidebarExperimentItems = ({
     hasTrainingRuns: (trainingRuns?.length ?? 0) > 0,
   });
   const { tabName: activeTabByRoute } = useGetExperimentPageActiveTabByRoute();
-  const location = useLocation();
-  const { search } = location;
+  const { search } = useLocation();
 
   return (
     <>
